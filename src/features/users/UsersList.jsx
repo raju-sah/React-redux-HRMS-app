@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { CreateForm } from "./CreateForm";
 import Modal from "../../app/components/form/Modal";
 import DataTable from "react-data-table-component";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Delete from "../../app/components/crud/Delete";
 import { useGetUsersQuery } from "./usersApiSlice";
+import View from "./View";
+import ToggleButton from "../../app/components/form/ToggleButton";
 
 const UsersList = () => {
   const { data: usersData, error, isLoading } = useGetUsersQuery();
@@ -12,10 +14,6 @@ const UsersList = () => {
 
   const users = usersData?.items || [];
 
-  const handleView = (row) => {
-    console.log("View", row);
-    // Implement view functionality
-  };
 
   const handleEdit = (row) => {
     console.log("Edit", row);
@@ -54,14 +52,27 @@ const UsersList = () => {
       sortable: true,
     },
     {
+      name: "Status",
+      cell: (row) => <ToggleButton user={row} />,
+    },
+    {
       name: "Actions",
       cell: (row) => (
         <div className="flex space-x-2">
-          <Modal icon={FaEye} className="text-primary text-lg">
-            <h2 className="text-lg font-bold mb-4">User Details</h2>
+          <Modal
+            icon={FaEye}
+            headingText="User Details"
+            className="text-primary text-lg"
+          >
+            <View user={row} />
           </Modal>
-          <Modal icon={FaEdit} className="text-secondary text-lg">
-            <h2 className="text-lg font-bold mb-4">User Edit</h2>
+          
+          <Modal
+            icon={FaEdit}
+            headingText="User Edit"
+            className="text-secondary text-lg"
+          >
+            <CreateForm />
           </Modal>
 
           <Delete user={row} />
@@ -112,8 +123,7 @@ const UsersList = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-3 mt-5">
-      <Modal buttonText="Create User">
-        <h2 className="text-lg font-bold relative bottom-5">Create User</h2>
+      <Modal buttonText="Create User" headingText="Create User">
         <CreateForm />
       </Modal>
 
@@ -123,14 +133,14 @@ const UsersList = () => {
         data={filteredItems}
         pagination
         paginationPerPage={10}
-        paginationRowsPerPageOptions={[
-          10,
-          20,
-          30,
-          50,
-          100,
-          filteredItems.length,
-        ]}
+        paginationRowsPerPageOptions={[10, 20, 30, 50, 100]}
+        paginationComponentOptions={{
+          rowsPerPageText: "Rows per page:",
+          rangeSeparatorText: "of",
+          noRowsPerPage: false,
+          selectAllRowsItem: true,
+          selectAllRowsItemText: "All",
+        }}
         subHeader
         subHeaderComponent={subHeaderComponent}
         persistTableHead
