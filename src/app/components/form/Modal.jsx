@@ -7,18 +7,27 @@ const Modal = ({
   children,
   icon: Icon,
   className,
+  btnClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
+  // Create a combined onClick handler if btnClick is provided
+  const handleClick = () => {
+    if (btnClick) {
+      btnClick();
+    }
+    openModal();
+  };
+
   return (
     <div>
       {Icon ? (
         <Icon
           className={`cursor-pointer ${className || ""}`}
-          onClick={openModal}
+          onClick={handleClick}
         />
       ) : (
         <button

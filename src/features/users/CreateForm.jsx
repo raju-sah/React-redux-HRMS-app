@@ -9,6 +9,7 @@ export const CreateForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     watch,
   } = useForm();
@@ -136,12 +137,13 @@ export const CreateForm = () => {
         />
       </div>
 
-    <CheckBox
-    label="Status"
-    name="status"
-    register={register}
-    className="mt-4"
-  />
+      <CheckBox
+        label="Status"
+        name="status"
+        className="mt-4"
+        register={register}
+        setValue={setValue}
+      />
 
       <input
         type="submit"

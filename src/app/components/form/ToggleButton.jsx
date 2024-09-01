@@ -1,12 +1,6 @@
-import { useState } from "react";
-
-const ToggleButton = () => {
-  // State to manage the toggle state
-  const [isToggled, setIsToggled] = useState(false);
-
-  // Function to handle the toggle action
+const ToggleButton = ({ isToggled, onToggle }) => {
   const handleToggle = () => {
-    setIsToggled(!isToggled);
+    onToggle(!isToggled); 
   };
 
   return (

@@ -12,6 +12,7 @@ export const usersApi = emptyApi.injectEndpoints({
             ]
           : [{ type: "User", id: "LIST" }],
     }),
+    
     getUserById: builder.query({
       query: (id) => `/users/${id}`,
       providesTags: (result, error, id) => [{ type: "User", id }],
@@ -27,12 +28,21 @@ export const usersApi = emptyApi.injectEndpoints({
       ],
     }),
 
-    
+
     postUser: builder.mutation({
       query: (user) => ({
         url: "/users",
         method: "POST",
         body: [user],
+      }),
+      invalidatesTags: [{ type: "User", id: "LIST" }],
+    }),
+
+    userStatusChange: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/users/${id}`, 
+        method: "PUT",
+        body: { status },
       }),
       invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
@@ -45,4 +55,5 @@ export const {
   useGetUserByIdQuery,
   useDeleteUserByIdMutation,
   usePostUserMutation,
+  useUserStatusChangeMutation
 } = usersApi;

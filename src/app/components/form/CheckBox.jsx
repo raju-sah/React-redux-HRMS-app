@@ -10,8 +10,8 @@ const Checkbox = ({ label, name, register, setValue, className = "" }) => {
       <input
         type="checkbox"
         id={name}
-        {...register(name)}
-        onChange={handleChange}
+        {...register(name)} // Registers the input with react-hook-form
+        onChange={handleChange} // Custom onChange handler
         className="form-checkbox h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary focus:ring-opacity-50"
       />
       <label htmlFor={name} className="ml-2 text-sm font-medium text-gray-700">

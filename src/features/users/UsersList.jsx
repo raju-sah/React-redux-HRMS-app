@@ -4,20 +4,45 @@ import Modal from "../../app/components/form/Modal";
 import DataTable from "react-data-table-component";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Delete from "../../app/components/crud/Delete";
-import { useGetUsersQuery } from "./usersApiSlice";
+import {
+  useGetUsersQuery,
+  useGetUserByIdQuery,
+  useUserStatusChangeMutation,
+} from "./usersApiSlice";
 import View from "./View";
 import ToggleButton from "../../app/components/form/ToggleButton";
+import { toast } from "react-toastify";
 
 const UsersList = () => {
   const { data: usersData, error, isLoading } = useGetUsersQuery();
   const [filterText, setFilterText] = useState("");
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const users = usersData?.items || [];
 
+  const [userStatusChange] = useUserStatusChangeMutation();
 
-  const handleEdit = (row) => {
-    console.log("Edit", row);
-    // Implement edit functionality
+  const { data: userById, isLoading: isUserLoading } = useGetUserByIdQuery(
+    selectedUserId,
+    {
+      skip: !selectedUserId,
+    }
+  );
+
+  const handleStatusToggle = async (user, newStatus) => {
+    try {
+      await userStatusChange({ id: user._uuid, status: newStatus }).unwrap();
+      toast.success("User status changed successfully!");
+    } catch (err) {
+      toast.error(
+        "Failed to change status of user: " +
+          (err.data?.message || "Unknown error")
+      );
+    }
+  };
+
+  const handleViewUser = (userId) => {
+    setSelectedUserId(userId);
   };
 
   const columns = [
@@ -53,7 +78,12 @@ const UsersList = () => {
     },
     {
       name: "Status",
-      cell: (row) => <ToggleButton user={row} />,
+      cell: (row) => (
+        <ToggleButton
+          isToggled={row.status === 1}
+          onToggle={(newStatus) => handleStatusToggle(row, newStatus ? 1 : 0)}
+        />
+      ),
     },
     {
       name: "Actions",
@@ -63,10 +93,13 @@ const UsersList = () => {
             icon={FaEye}
             headingText="User Details"
             className="text-primary text-lg"
+            btnClick={() => handleViewUser(row._uuid)}
           >
-            <View user={row} />
+            {selectedUserId === row._uuid && userById && (
+              <View user={userById} isLoading={isUserLoading} />
+            )}
           </Modal>
-          
+
           <Modal
             icon={FaEdit}
             headingText="User Edit"
@@ -85,15 +118,10 @@ const UsersList = () => {
     return users.filter((item) => {
       return (
         item.firstName?.toLowerCase().includes(filterText.toLowerCase()) ||
-        "" ||
         item.lastName?.toLowerCase().includes(filterText.toLowerCase()) ||
-        "" ||
         item.company?.toLowerCase().includes(filterText.toLowerCase()) ||
-        "" ||
         item.email?.toLowerCase().includes(filterText.toLowerCase()) ||
-        "" ||
-        item.age?.toString().includes(filterText.toLowerCase()) ||
-        ""
+        item.age?.toString().includes(filterText.toLowerCase())
       );
     });
   }, [users, filterText]);
