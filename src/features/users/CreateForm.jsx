@@ -4,6 +4,7 @@ import { PasswordInput } from "../../app/components/form/PasswordInput";
 import { toast } from "react-toastify";
 import { usePostUserMutation } from "./usersApiSlice";
 import CheckBox from "../../app/components/form/CheckBox";
+import FormButton from "../../app/components/form/FormButton";
 
 export const CreateForm = () => {
   const {
@@ -144,12 +145,7 @@ export const CreateForm = () => {
         register={register}
       />
 
-      <input
-        type="submit"
-        className="w-1/6 py-1 mt-4 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 cursor-pointer"
-        value={isLoading ? "Submitting..." : "Submit"}
-        disabled={isLoading}
-      />
+      <FormButton isLoading={isLoading} text="Create" />
 
       {/* {isSuccess && <p className="text-green-500 mt-2">User created successfully!</p>}
       {isError && <p className="text-red-500 mt-2">Error: {error?.data?.message || "Failed to create user"}</p>} */}

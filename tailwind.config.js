@@ -4,9 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#1d4ed8',
+        // primary: '#18191a',
+        primary: '#021526',
         secondary: '#f59e0b',
         danger: '#ef4444',
+        buttonHover: '#f59e0b'
         // Add more custom colors as needed
       },
     },

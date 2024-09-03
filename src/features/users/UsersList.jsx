@@ -50,15 +50,11 @@ const UsersList = () => {
       name: "SN",
       selector: (row, index) => index + 1,
       sortable: true,
+      width : "65px"
     },
     {
-      name: "First Name",
-      selector: (row) => row.firstName || "N/A",
-      sortable: true,
-    },
-    {
-      name: "Last Name",
-      selector: (row) => row.lastName || "N/A",
+      name: "Full Name",
+      selector: (row) => `${row.firstName} ${row.lastName || "N/A"}`,
       sortable: true,
     },
     {
@@ -70,6 +66,7 @@ const UsersList = () => {
       name: "Age",
       selector: (row) => row.age || "N/A",
       sortable: true,
+      width : "70px"
     },
     {
       name: "Company",
@@ -84,6 +81,7 @@ const UsersList = () => {
           onToggle={(newStatus) => handleStatusToggle(row, newStatus ? 1 : 0)}
         />
       ),
+      width : "80px"
     },
     {
       name: "Actions",
@@ -130,8 +128,8 @@ const UsersList = () => {
     return (
       <input
         type="text"
-        placeholder="Search by name, company, email, or age"
-        className="w-1/3 p-2 border rounded focus:border-primary focus:outline-none"
+        placeholder="Search..."
+        className="w-1/4 py-1 px-2 border border-gray-500 rounded focus:border-primary focus:outline-none"
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
       />
@@ -150,13 +148,13 @@ const UsersList = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-3 mt-5">
+    <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal buttonText="Create User" headingText="Create User">
         <CreateForm />
       </Modal>
 
       <DataTable
-        title="Users List"
+        // title="Users List"
         columns={columns}
         data={filteredItems}
         pagination

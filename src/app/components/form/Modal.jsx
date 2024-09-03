@@ -31,11 +31,11 @@ const Modal = ({
         />
       ) : (
         <button
-          onClick={openModal}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        onClick={openModal}
+        className="bg-primary text-white py-1 px-2 text-sm rounded border hover:bg-transparent  hover:border-primary hover:text-primary"
         >
-          {buttonText}
-        </button>
+        {buttonText}
+      </button>
       )}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-10">
