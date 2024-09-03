@@ -9,7 +9,6 @@ export const CreateForm = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
     watch,
   } = useForm();
@@ -20,6 +19,7 @@ export const CreateForm = () => {
 
   const onSubmit = async (data) => {
     data.age = Number(data.age);
+    data.status = data.status == true ? 1 : 0;
     try {
       await postUser(data).unwrap();
       toast.success("User created successfully!");
@@ -142,7 +142,6 @@ export const CreateForm = () => {
         name="status"
         className="mt-4"
         register={register}
-        setValue={setValue}
       />
 
       <input
