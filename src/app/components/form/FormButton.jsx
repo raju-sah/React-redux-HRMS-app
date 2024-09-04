@@ -5,7 +5,7 @@ const FormButton = ({ isLoading, text, ...props }) => {
     <input
       type="submit"
       className="bg-primary text-white py-1 px-2 text-sm rounded border hover:bg-transparent  hover:border-primary hover:text-primary cursor-pointer"
-      value={isLoading ? "Loading..." : text}
+      value={isLoading ? "Saving..." : text}
       {...props}
     />
   );

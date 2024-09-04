@@ -1,4 +1,4 @@
-const View = ({ user }) => {
+export const View = ({ user }) => {
     if (!user) return null;
   
     return (
@@ -60,5 +60,4 @@ const View = ({ user }) => {
     );
   };
   
-  export default View;
   

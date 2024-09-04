@@ -1,10 +1,11 @@
+import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { FormInput } from "../../app/components/form/FormInput";
 import { PasswordInput } from "../../app/components/form/PasswordInput";
-import { toast } from "react-toastify";
 import { usePostUserMutation } from "./usersApiSlice";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
+import usePostHook from "../../hooks/usePostHook"; // Import the custom hook
 
 export const CreateForm = () => {
   const {
@@ -12,28 +13,29 @@ export const CreateForm = () => {
     handleSubmit,
     formState: { errors },
     watch,
+    reset, // Add reset to reset the form
   } = useForm();
-  const password = watch("password");
 
-  const [postUser, { isLoading, isSuccess, isError, error }] =
-    usePostUserMutation();
+  const password = watch("password"); // Watch the password field
 
-  const onSubmit = async (data) => {
-    data.age = Number(data.age);
-    data.status = data.status == true ? 1 : 0;
-    try {
-      await postUser(data).unwrap();
-      toast.success("User created successfully!");
-    } catch (err) {
-      toast.error(
-        "Failed to create user: " + err.data?.message || "Unknown error"
-      );
-    }
-  };
+  const postQuery = usePostUserMutation;
+  const { onSubmit, isLoading, isSuccess, isError, error } = usePostHook(postQuery);
+
+  const handleFormSubmit = useCallback(
+    (data) => {
+      data.age = Number(data.age);
+      data.status = data.status ? 1 : 0;
+
+      onSubmit(data).then(() => {
+        reset();
+      });
+    },
+    [onSubmit, reset]
+  );
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)} // Use handleSubmit from react-hook-form
       className="mx-auto p-2 mt-5 rounded-lg"
     >
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -125,6 +127,7 @@ export const CreateForm = () => {
           }}
           errors={errors}
         />
+
         <FormInput
           label="Company"
           name="company"
@@ -145,10 +148,9 @@ export const CreateForm = () => {
         register={register}
       />
 
-      <FormButton isLoading={isLoading} text="Create" />
+      <FormButton isLoading={isLoading} text="Save" />
 
-      {/* {isSuccess && <p className="text-green-500 mt-2">User created successfully!</p>}
-      {isError && <p className="text-red-500 mt-2">Error: {error?.data?.message || "Failed to create user"}</p>} */}
+      {/* {isError && <p className="text-red-500 mt-2">Error: {error?.data?.message || "Failed to create user"}</p>} */}
     </form>
   );
 };

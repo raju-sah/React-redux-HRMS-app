@@ -30,7 +30,7 @@ export const PasswordInput = ({
           id={name}
           type={showPassword ? "text" : "password"}
           placeholder={label}
-          className={`w-full px-3 py-2 border rounded-lg focus:outline-none ${
+          className={`w-full px-2 py-1.5 border rounded-lg focus:outline-none ${
             errors[name]
               ? "border-red-500 focus:border-red-500"
               : "border-gray-300 focus:border-blue-500"

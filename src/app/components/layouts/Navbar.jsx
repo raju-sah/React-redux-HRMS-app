@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <nav className="bg-gray-800 text-white p-5 flex items-center justify-between">
+    <nav className="bg-primary text-white py-2 px-3 flex items-center justify-between">
       {/* Search Field */}
       <div className="flex items-center space-x-2">
         <input

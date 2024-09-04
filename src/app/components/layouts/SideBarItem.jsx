@@ -28,14 +28,14 @@ const SideBarItem = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
-      <div className={`transition-all duration-300 ${isOpen ? 'w-56' : 'w-16'}`}>
+    <div className="flex min-h-screen bg-primary text-white">
+      <div className={`transition-all duration-300 ${isOpen ? 'w-52' : 'w-16'}`}>
         <div className="flex justify-end p-4">
           <button onClick={() => setIsOpen(!isOpen)} className="focus:outline-none">
             <FiMenu size={22} />
           </button>
         </div>
-        <nav className="mt-4 px-4">
+        <nav className="mt-4 px-2">
           {menuItems.map((item, index) => (
             <SideBar key={index} item={item} isSidebarOpen={isOpen} />
           ))}

@@ -1,11 +1,9 @@
-import { useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import Spinner from '../Spinner';
-import { useDeleteUserByIdMutation } from '../../../features/users/usersApiSlice';
+import { useState } from "react";
+import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
+import {Spinner} from "../Spinner"; // Ensure Spinner component exists or replace with your own
 
-const Delete = ({ user }) => {
-  const [deleteUser] = useDeleteUserByIdMutation();
+export const Delete = ({ itemId, deleteFn }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -21,24 +19,16 @@ const Delete = ({ user }) => {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Yes, delete it!',
       });
 
-      if (isConfirmed) {
-        await deleteUser(user._uuid).unwrap();
-        Swal.fire({
-          title: 'Deleted!',
-          text: 'The user has been deleted.',
-          icon: 'success'
-        });
+      if (isConfirmed && deleteFn) {
+        await deleteFn(itemId).unwrap(); // Pass the itemId to deleteFn
+        Swal.fire('Deleted!', 'Deleted successfully.', 'success');
       }
-    } catch (err) {
-      console.error('Failed to delete the user:', err);
-      Swal.fire({
-        title: 'Error!',
-        text: 'There was an issue deleting the user.',
-        icon: 'error'
-      });
+    } catch (error) {
+      console.error("Failed to delete:", error);
+      Swal.fire('Error!', 'There was an issue deleting.', 'error');
     } finally {
       setIsDeleting(false);
     }
@@ -53,11 +43,9 @@ const Delete = ({ user }) => {
       />
       {isDeleting && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Spinner id={`spinner-${user._uuid}`} />
+          <Spinner />
         </div>
       )}
     </div>
   );
 };
-
-export default Delete;
