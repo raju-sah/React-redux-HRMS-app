@@ -27,7 +27,6 @@ export const Delete = ({ itemId, deleteFn }) => {
         Swal.fire('Deleted!', 'Deleted successfully.', 'success');
       }
     } catch (error) {
-      console.error("Failed to delete:", error);
       Swal.fire('Error!', 'There was an issue deleting.', 'error');
     } finally {
       setIsDeleting(false);

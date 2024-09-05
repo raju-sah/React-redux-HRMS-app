@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Modal from "../../app/components/form/Modal";
 import { FaEye, FaEdit } from "react-icons/fa";
-import { Delete } from "../../app/components/crud/Delete";
 import {
   useGetUsersQuery,
   useGetUserByIdQuery,
@@ -56,47 +55,43 @@ const UsersList = () => {
       selector: (row) => row.company || "N/A",
       sortable: true,
     },
-    
   ];
 
   const filterColumns = ["firstName", "lastName", "email", "company", "age"];
-  const actions = ["view", "edit", "delete"];
 
   return (
     <div className="max-w-6xl mx-auto p-2 mt-2">
-    <Modal buttonText="Create" headingText="Create User">
-      <CreateForm />
-    </Modal>
+      <Modal buttonText="Create" headingText="Create User">
+        <CreateForm isOpen />
+      </Modal>
       {isLoading && <p className="text-center">Loading...</p>}
       {error && <p>Error loading users: {error.message}</p>}
       <CustomDataTable
         data={users}
         columns={columns}
         filterColumns={filterColumns}
-        statusColumn={{ active: true, id: (row) => row._uuid, onChange: statusChange}}
-        actionsSlot={(row) => (
-          <>
-            <Modal
-              icon={FaEye}
-              headingText="User Details"
-              className="text-primary text-lg"
-              btnClick={() => setSelectedUserId(row._uuid)}
-            >
-              <View user={userById} isLoading={isUserLoading} />
-            </Modal>
-
-            <Modal
-              icon={FaEdit}
-              headingText="User Edit"
-              className="text-secondary text-lg"
-            >
-              <CreateForm />
-            </Modal>
-
-            <Delete itemId={row._uuid} deleteFn={deleteQuery} />
-          </>
-        )}
-       
+        statusColumn={{
+          active: true,
+          id: (row) => row._uuid,
+          onChange: statusChange,
+        }}
+        modals={[
+          {
+            btnIcon: FaEye,
+            title: "User Details",
+            className: "text-primary text-lg",
+            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
+            content: () => <View user={userById} isLoading={isUserLoading} />,
+          },
+          {
+            btnIcon: FaEdit,
+            title: "User Edit",
+            className: "text-secondary text-lg",
+            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
+            content: (row) => <CreateForm user={row} />,
+          },
+        ]}
+        deleteButton={{ id: (row) => row._uuid, deleteQuery }}
       />
     </div>
   );

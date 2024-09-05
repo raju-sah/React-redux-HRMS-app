@@ -7,17 +7,17 @@ const Modal = ({
   children,
   icon: Icon,
   className,
-  btnClick,
+  btnId,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  // Create a combined onClick handler if btnClick is provided
+  // Create a combined onClick handler if btnId is provided
   const handleClick = () => {
-    if (btnClick) {
-      btnClick();
+    if (btnId) {
+      btnId();
     }
     openModal();
   };

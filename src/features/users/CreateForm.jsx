@@ -1,11 +1,11 @@
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { FormInput } from "../../app/components/form/FormInput";
 import { PasswordInput } from "../../app/components/form/PasswordInput";
 import { usePostUserMutation } from "./usersApiSlice";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
-import usePostHook from "../../hooks/usePostHook"; // Import the custom hook
+import usePostHook from "../../hooks/usePostHook";
 
 export const CreateForm = () => {
   const {
@@ -13,7 +13,7 @@ export const CreateForm = () => {
     handleSubmit,
     formState: { errors },
     watch,
-    reset, // Add reset to reset the form
+    reset,
   } = useForm();
 
   const password = watch("password"); // Watch the password field

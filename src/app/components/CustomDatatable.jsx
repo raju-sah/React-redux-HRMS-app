@@ -1,15 +1,17 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, isValidElement } from "react";
 import DataTable from "react-data-table-component";
 import ToggleButton from "../../app/components/form/ToggleButton";
-import { CSVExportButton } from "./csvDonload/CSVExportButton";
 import ExportCSV from "./csvDonload/ExportCSV";
+import Modal from "./form/Modal";
+import { Delete } from "./crud/Delete";
 
 const CustomDataTable = ({
   data,
   columns,
   filterColumns,
-  actionsSlot,
-  statusColumn, // New prop for status column configuration
+  statusColumn,
+  modals = [],
+  deleteButton,
 }) => {
   const [filterText, setFilterText] = useState("");
 
@@ -24,8 +26,8 @@ const CustomDataTable = ({
     });
   }, [data, filterColumns, filterText]);
 
-  const subHeaderComponent = useMemo(() => {
-    return (
+  const subHeaderComponent = useMemo(
+    () => (
       <input
         type="text"
         placeholder="Search..."
@@ -33,46 +35,84 @@ const CustomDataTable = ({
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
       />
-    );
-  }, [filterText]);
-
-  // Create the status column configuration
-  const statusColumnConfig = {
-    name: "Status",
-    cell: (row) => (
-      <ToggleButton
-        userId={statusColumn.id(row)}
-        isToggled={row.status === 1}
-        StatusChange={statusColumn.onChange}
-      />
     ),
-    width: "80px",
-  };
+    [filterText]
+  );
 
-  // Create the action column configuration
-  const actionColumn = {
-    name: "Actions",
-    cell: (row) => (
-      <div className="flex space-x-2">
-        {actionsSlot(row)} {/* Render the custom actions slot */}
-      </div>
-    ),
+  const customStyles = {
+    rows: {
+      style: {
+        minHeight: "72px", // override the row height
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: "14px",
+        fontWeight: "bold",
+        color: "#fff",
+        backgroundColor: "#021526",
+      },
+    },
   };
+  const statusColumnConfig = useMemo(
+    () => ({
+      name: "Status",
+      cell: (row) => (
+        <ToggleButton
+          userId={statusColumn.id(row)}
+          isToggled={row.status === 1}
+          StatusChange={statusColumn.onChange}
+        />
+      ),
+      width: "80px",
+    }),
+    [statusColumn]
+  );
+
+  const actionColumn = useMemo(
+    () => ({
+      name: "Actions",
+      cell: (row) => (
+        <div className="flex space-x-2">
+          {modals.map((modal, index) => (
+            <Modal
+              key={index}
+              icon={modal.btnIcon}
+              headingText={modal.title}
+              className={modal.className}
+              setbtnIdFunc={() => modal.setbtnIdFunc(row)}
+            >
+              {typeof modal.content === "function"
+                ? modal.content(row)
+                : isValidElement(modal.content)
+                ? modal.content
+                : null}
+            </Modal>
+          ))}
+          {deleteButton && (
+            <Delete
+              itemId={deleteButton.id(row)}
+              deleteFn={deleteButton.deleteQuery}
+            />
+          )}
+        </div>
+      ),
+    }),
+    [modals, deleteButton]
+  );
 
   return (
     <>
       <ExportCSV
         data={filteredItems}
-        className={
-          "rounded border hover:bg-transparent relative left-20 bottom-[30px] hover:border-primary hover:text-primary cursor-pointer"
-        }
+        className="rounded border hover:bg-transparent relative left-20 bottom-[30px] hover:border-primary hover:text-primary cursor-pointer"
       />
       <DataTable
         columns={[
           ...columns,
-          statusColumn.active && statusColumnConfig,
+          statusColumn?.active && statusColumnConfig,
           actionColumn,
-        ].filter(Boolean)} // Include status column before action column
+        ].filter(Boolean)}
         data={filteredItems}
         pagination
         paginationPerPage={10}
@@ -85,15 +125,13 @@ const CustomDataTable = ({
           selectAllRowsItemText: "All",
         }}
         subHeader
-        subHeaderComponent={
-          <>
-            {subHeaderComponent}
-            {/* <CSVExportButton data={data} /> */}
-          </>
-        }
+        subHeaderComponent={subHeaderComponent}
         persistTableHead
         fixedHeader
         fixedHeaderScrollHeight="400px"
+        selectableRows
+        // dense
+        customStyles={customStyles}
       />
     </>
   );
