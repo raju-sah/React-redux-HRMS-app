@@ -1,49 +1,76 @@
-import { useCallback } from "react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
+import Skeleton from "react-loading-skeleton";
 import { FormInput } from "../../app/components/form/FormInput";
 import { PasswordInput } from "../../app/components/form/PasswordInput";
-import { usePostUserMutation } from "./usersApiSlice";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
-import usePostHook from "../../hooks/usePostHook";
-import { useDispatch } from "react-redux";
-import { closeModal } from "../modal/modalSlice";
 
-export const CreateForm = ({modalId}) => {
-  const dispatch = useDispatch();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    reset,
-  } = useForm();
+export const EditForm = ({ user, isLoading, modalId }) => {
 
-  const password = watch("password"); // Watch the password field
+  const MemoizedFormInput = React.memo(FormInput);
+  const MemoizedPasswordInput = React.memo(PasswordInput);
+  const MemoizedCheckBox = React.memo(CheckBox);
 
-  const postQuery = usePostUserMutation;
-  const { onSubmit, isLoading, isSuccess, isError, error } = usePostHook(postQuery);
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
+    defaultValues: {
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      age: user?.age || "",
+      company: user?.company || "",
+      password: user?.password || "",
+      confirmPassword: user?.password || "",
+      status: user?.status,
+    }
+  });
 
-  const handleFormSubmit = useCallback(
-    (data) => {
-      data.age = Number(data.age);
-      data.status = data.status ? 1 : 0;
+  useMemo(() => {
+    if (user) {
+      setValue("firstName", user.firstName || "");
+      setValue("lastName", user.lastName || "");
+      setValue("email", user.email || "");
+      setValue("age", user.age || "");
+      setValue("company", user.company || "");
+      setValue("password", user.password || "");
+      setValue("confirmPassword", user.password || "");
+      setValue("status", user.status);
+    }
+  }, [user, setValue]);
 
-      onSubmit(data).then(() => {
-        reset();
-        dispatch(closeModal(modalId));
-      });
-    },
-    [onSubmit, reset]
-  );
+  const onSubmit = async (data) => {
+    console.log(data);
+    // Call your update hook or API request here
+  };
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto p-2 mt-5 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <Skeleton height={40} className="col-span-2" />
+          <Skeleton height={40} className="col-span-2" />
+          <Skeleton height={40} className="col-span-1" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4">
+          <Skeleton height={40} className="col-span-2" />
+          <Skeleton height={40} className="col-span-1" />
+          <Skeleton height={40} className="col-span-1" />
+          <Skeleton height={40} className="col-span-2" />
+        </div>
+        <div className="mt-4">
+          <Skeleton height={40} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
-      onSubmit={handleSubmit(handleFormSubmit)} // Use handleSubmit from react-hook-form
+      onSubmit={handleSubmit(onSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <FormInput
+        <MemoizedFormInput
           label="First Name"
           name="firstName"
           className="col-span-2"
@@ -58,7 +85,7 @@ export const CreateForm = ({modalId}) => {
           errors={errors}
         />
 
-        <FormInput
+        <MemoizedFormInput
           label="Last Name"
           name="lastName"
           className="col-span-2"
@@ -73,7 +100,7 @@ export const CreateForm = ({modalId}) => {
           errors={errors}
         />
 
-        <FormInput
+        <MemoizedFormInput
           label="Age"
           name="age"
           type="number"
@@ -87,7 +114,7 @@ export const CreateForm = ({modalId}) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <FormInput
+        <MemoizedFormInput
           label="Email"
           name="email"
           type="email"
@@ -103,14 +130,13 @@ export const CreateForm = ({modalId}) => {
           errors={errors}
         />
 
-        <PasswordInput
+        <MemoizedPasswordInput
           label="Password"
           name="password"
           type="password"
           className="col-span-1"
           register={register}
           validationRules={{
-            required: "Password is required",
             minLength: {
               value: 6,
               message: "Password must be at least 6 characters",
@@ -119,20 +145,19 @@ export const CreateForm = ({modalId}) => {
           errors={errors}
         />
 
-        <PasswordInput
+        <MemoizedPasswordInput
           label="Confirm Password"
           name="confirmPassword"
           type="password"
           className="col-span-1"
           register={register}
           validationRules={{
-            required: "Confirm Password is required",
-            validate: (value) => value === password || "Passwords do not match",
+            validate: (value) => value === watch("password") || "Passwords do not match",
           }}
           errors={errors}
         />
 
-        <FormInput
+        <MemoizedFormInput
           label="Company"
           name="company"
           type="text"
@@ -145,7 +170,7 @@ export const CreateForm = ({modalId}) => {
         />
       </div>
 
-      <CheckBox
+      <MemoizedCheckBox
         label="Status"
         name="status"
         className="mt-4"
@@ -153,8 +178,6 @@ export const CreateForm = ({modalId}) => {
       />
 
       <FormButton isLoading={isLoading} text="Save" />
-
-      {/* {isError && <p className="text-red-500 mt-2">Error: {error?.data?.message || "Failed to create user"}</p>} */}
     </form>
   );
 };

@@ -4,6 +4,7 @@ import ToggleButton from "../../app/components/form/ToggleButton";
 import ExportCSV from "./csvDonload/ExportCSV";
 import Modal from "./form/Modal";
 import { Delete } from "./crud/Delete";
+import { nanoid } from "@reduxjs/toolkit";
 
 const CustomDataTable = ({
   data,
@@ -42,7 +43,7 @@ const CustomDataTable = ({
   const customStyles = {
     rows: {
       style: {
-        minHeight: "72px", // override the row height
+        minHeight: "45px", // override the row height
       },
     },
     headCells: {
@@ -76,11 +77,13 @@ const CustomDataTable = ({
         <div className="flex space-x-2">
           {modals.map((modal, index) => (
             <Modal
-              key={index}
+              key={row._uuid + index}
               icon={modal.btnIcon}
               headingText={modal.title}
               className={modal.className}
               setbtnIdFunc={() => modal.setbtnIdFunc(row)}
+              modalId={`modal-${row._uuid}-${index}`}
+
             >
               {typeof modal.content === "function"
                 ? modal.content(row)

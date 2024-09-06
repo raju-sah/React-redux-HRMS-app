@@ -8,6 +8,7 @@ export const FormInput = ({
   type = "text",
   errors,
   className,
+  defaultValue,
 }) => {
   return (
     <div className={`mb-4 ${className}`}>
@@ -23,6 +24,7 @@ export const FormInput = ({
         id={name}
         type={type}
         placeholder={label}
+        defaultValue={defaultValue}
         className={`w-full px-2 py-1.5 border rounded-lg focus:border-primary focus:outline-none ${
           errors[name]
             ? "border-red-500 focus:border-red-500"

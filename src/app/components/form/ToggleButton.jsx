@@ -16,14 +16,13 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
       }
     )
     .then(() => {
-      // Toggle state only if the promise is resolved successfully
       setToggled(!toggled);
     })
-    .catch((err) => {
-      toast.error(
-        'Failed to change status of user: ' + (err.data?.message || 'Unknown error')
-      );
-    });
+    // .catch((err) => {
+    //   toast.error(
+    //     'Failed to change status of user: ' + (err.data?.message || 'Unknown error')
+    //   );
+    // });
   };
 
   return (

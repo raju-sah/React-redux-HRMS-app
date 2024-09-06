@@ -10,6 +10,7 @@ import {
 import { View } from "./View";
 import { CreateForm } from "./CreateForm";
 import CustomDataTable from "../../app/components/CustomDatatable";
+import { EditForm } from "./EditForm";
 
 const UsersList = () => {
   const { data: usersData, error, isLoading } = useGetUsersQuery();
@@ -61,9 +62,10 @@ const UsersList = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-2 mt-2">
-      <Modal buttonText="Create" headingText="Create User">
-        <CreateForm isOpen />
+      <Modal modalId="createUserModalId" buttonText="Create" headingText="Create User">
+        <CreateForm />
       </Modal>
+      
       {isLoading && <p className="text-center">Loading...</p>}
       {error && <p>Error loading users: {error.message}</p>}
       <CustomDataTable
@@ -77,8 +79,9 @@ const UsersList = () => {
         }}
         modals={[
           {
-            btnIcon: FaEye,
+            modalId: "viewUser",
             title: "User Details",
+            btnIcon: FaEye,
             className: "text-primary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
             content: () => <View user={userById} isLoading={isUserLoading} />,
@@ -88,7 +91,7 @@ const UsersList = () => {
             title: "User Edit",
             className: "text-secondary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: (row) => <CreateForm user={row} />,
+            content: () => <EditForm user={userById} isLoading={isUserLoading} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}
