@@ -9,16 +9,45 @@ import { useDispatch } from "react-redux";
 import { useUpdateUserMutation } from "./usersApiSlice";
 import useUpdateHook from "../../hooks/useUpdateHook";
 import { closeModal } from "../modal/modalSlice";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
+const UserEditSchema = z
+  .object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email(),
+    age: z.coerce
+      .number()
+      .min(1, "Age is required")
+      .min(18, "Age must be at least 18 years old")
+      .max(120, "Age must be 120 or less"),
+    status: z.boolean().default(false),
+    company: z.string(),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 export const EditForm = ({ user, isLoading, modalId }) => {
   const dispatch = useDispatch();
-
 
   const MemoizedFormInput = memo(FormInput);
   const MemoizedPasswordInput = memo(PasswordInput);
   const MemoizedCheckBox = memo(CheckBox);
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
     defaultValues: {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
@@ -28,7 +57,8 @@ export const EditForm = ({ user, isLoading, modalId }) => {
       password: user?.password || "",
       confirmPassword: user?.password || "",
       status: user?.status,
-    }
+    },
+    resolver: zodResolver(UserEditSchema),
   });
 
   useMemo(() => {
@@ -45,13 +75,13 @@ export const EditForm = ({ user, isLoading, modalId }) => {
   }, [user, setValue]);
 
   const updateQuery = useUpdateUserMutation;
-  const { onSubmit} = useUpdateHook(updateQuery);
+  const { onSubmit } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
     (data) => {
       data.age = Number(data.age);
       data.status = data.status ? 1 : 0;
-  
+
       onSubmit({ id: user._uuid, ...data })
         .then(() => {
           reset();
@@ -63,25 +93,22 @@ export const EditForm = ({ user, isLoading, modalId }) => {
     },
     [onSubmit, reset, user, modalId, dispatch]
   );
-  
 
   if (isLoading) {
     return (
       <div className="mx-auto p-2 mt-5 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Skeleton height={40} className="col-span-2" />
-          <Skeleton height={40} className="col-span-2" />
-          <Skeleton height={40} className="col-span-1" />
+          <Skeleton height={30} className="col-span-2" />
+          <Skeleton height={30} className="col-span-2" />
+          <Skeleton height={30} className="col-span-1" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mt-4">
-          <Skeleton height={40} className="col-span-2" />
-          <Skeleton height={40} className="col-span-1" />
-          <Skeleton height={40} className="col-span-1" />
-          <Skeleton height={40} className="col-span-2" />
+        <div className="grid grid-cols-1 md:grid-cols-6 gap- mt-4">
+          <Skeleton height={30} className="col-span-2" />
+          <Skeleton height={30} className="col-span-1" />
+          <Skeleton height={30} className="col-span-1" />
         </div>
-        <div className="mt-4">
-          <Skeleton height={40} />
-        </div>
+        <Skeleton height={20} width={70} className="mt-4" />
+        <Skeleton height={30} width={70} className="mt-4" />
       </div>
     );
   }
@@ -97,13 +124,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           name="firstName"
           className="col-span-2"
           register={register}
-          validationRules={{
-            required: "First name is required",
-            maxLength: {
-              value: 20,
-              message: "First name cannot exceed 20 characters",
-            },
-          }}
           errors={errors}
         />
 
@@ -112,13 +132,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           name="lastName"
           className="col-span-2"
           register={register}
-          validationRules={{
-            required: "Last name is required",
-            maxLength: {
-              value: 20,
-              message: "Last name cannot exceed 20 characters",
-            },
-          }}
           errors={errors}
         />
 
@@ -127,10 +140,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           name="age"
           type="number"
           register={register}
-          validationRules={{
-            min: { value: 18, message: "Age must be at least 18" },
-            max: { value: 100, message: "Age cannot exceed 100" },
-          }}
           errors={errors}
         />
       </div>
@@ -142,13 +151,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           type="email"
           className="col-span-2"
           register={register}
-          validationRules={{
-            required: "Email is required",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
-            },
-          }}
           errors={errors}
         />
 
@@ -158,13 +160,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           type="password"
           className="col-span-1"
           register={register}
-          validationRules={{
-            required: "Password is required",
-            minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
-            },
-          }}
           errors={errors}
         />
 
@@ -174,9 +169,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           type="password"
           className="col-span-1"
           register={register}
-          validationRules={{
-            validate: (value) => value === watch("password") || "Passwords do not match",
-          }}
           errors={errors}
         />
 
@@ -186,9 +178,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           type="text"
           className="col-span-2"
           register={register}
-          validationRules={{
-            required: "Company is required",
-          }}
           errors={errors}
         />
       </div>

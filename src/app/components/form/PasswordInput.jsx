@@ -8,6 +8,7 @@ export const PasswordInput = ({
   name,
   errors,
   className,
+  required = false,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -21,7 +22,7 @@ export const PasswordInput = ({
         htmlFor={name}
         className="block text-sm font-medium text-gray-700 mb-1"
       >
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
         {validationRules?.required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">

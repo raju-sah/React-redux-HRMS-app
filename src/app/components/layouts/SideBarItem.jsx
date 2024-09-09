@@ -10,9 +10,9 @@ const SideBarItem = () => {
     {
       label: 'Users',
       icon: <FiUsers size={15} />,
-      children: [
+      children: [ 
         { label: 'Manage Users', path: '/users-list', icon: <FiList size={15} /> },
-        { label: 'User Settings', path: '/users/settings', icon: <FiUserCheck size={15} /> },
+        { label: 'Address', path: '/address', icon: <FiUserCheck size={15} /> },
         {
           label: 'User Groups',
           icon: <FiUserPlus size={15} />,

@@ -8,6 +8,7 @@ import {
 import Layout from "../app/components/layouts/Layout";
 import Setting from "../features/settings/Setting";
 import PersonalDetails from "../features/profile/PersonalDetails";
+import AuthenticatedRoute from "../features/login/AuthenticatedRoute";
 
 // Lazy load components
 const UsersList = lazy(() => import("../features/users/UsersList"));
@@ -27,7 +28,13 @@ const AppRoutes = () => {
           <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Routes that are wrapped with Layout */}
-          <Route element={<Layout />}>
+          <Route
+            element={
+              <AuthenticatedRoute>
+                <Layout />
+              </AuthenticatedRoute>
+            }
+          >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/users-list" element={<UsersList />} />
             <Route path="/home" element={<Dashboard />} />
