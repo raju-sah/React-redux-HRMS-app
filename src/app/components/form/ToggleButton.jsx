@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 const ToggleButton = ({ userId, isToggled, StatusChange }) => {
   const [toggled, setToggled] = useState(isToggled);
 
-  const handleToggle = () => {
+  useEffect(() => {
+    setToggled(isToggled);
+  }, [isToggled]);
+
+  const handleToggle = useCallback(() => {
     const newStatus = !toggled ? 1 : 0;
 
     toast.promise(
@@ -14,16 +18,10 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
         success: 'Status changed successfully!',
         error: 'Failed to change status of user: Unknown error',
       }
-    )
-    .then(() => {
+    ).then(() => {
       setToggled(!toggled);
-    })
-    // .catch((err) => {
-    //   toast.error(
-    //     'Failed to change status of user: ' + (err.data?.message || 'Unknown error')
-    //   );
-    // });
-  };
+    });
+  }, [toggled, userId, StatusChange]);
 
   return (
     <label className="relative inline-flex items-center cursor-pointer">

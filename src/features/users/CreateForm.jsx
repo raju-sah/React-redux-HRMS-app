@@ -34,7 +34,7 @@ export const CreateForm = ({modalId}) => {
         dispatch(closeModal(modalId));
       });
     },
-    [onSubmit, reset]
+    [onSubmit, reset, modalId, dispatch]
   );
 
   return (

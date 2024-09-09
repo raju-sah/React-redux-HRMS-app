@@ -1,18 +1,24 @@
-import React, { useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import Skeleton from "react-loading-skeleton";
 import { FormInput } from "../../app/components/form/FormInput";
 import { PasswordInput } from "../../app/components/form/PasswordInput";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
+import { useDispatch } from "react-redux";
+import { useUpdateUserMutation } from "./usersApiSlice";
+import useUpdateHook from "../../hooks/useUpdateHook";
+import { closeModal } from "../modal/modalSlice";
 
 export const EditForm = ({ user, isLoading, modalId }) => {
+  const dispatch = useDispatch();
 
-  const MemoizedFormInput = React.memo(FormInput);
-  const MemoizedPasswordInput = React.memo(PasswordInput);
-  const MemoizedCheckBox = React.memo(CheckBox);
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
+  const MemoizedFormInput = memo(FormInput);
+  const MemoizedPasswordInput = memo(PasswordInput);
+  const MemoizedCheckBox = memo(CheckBox);
+
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
     defaultValues: {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
@@ -38,10 +44,26 @@ export const EditForm = ({ user, isLoading, modalId }) => {
     }
   }, [user, setValue]);
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    // Call your update hook or API request here
-  };
+  const updateQuery = useUpdateUserMutation;
+  const { onSubmit} = useUpdateHook(updateQuery);
+
+  const handleFormSubmit = useCallback(
+    (data) => {
+      data.age = Number(data.age);
+      data.status = data.status ? 1 : 0;
+  
+      onSubmit({ id: user._uuid, ...data })
+        .then(() => {
+          reset();
+          dispatch(closeModal(modalId));
+        })
+        .catch((error) => {
+          console.error("Failed to submit form", error);
+        });
+    },
+    [onSubmit, reset, user, modalId, dispatch]
+  );
+  
 
   if (isLoading) {
     return (
@@ -66,7 +88,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -137,6 +159,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           className="col-span-1"
           register={register}
           validationRules={{
+            required: "Password is required",
             minLength: {
               value: 6,
               message: "Password must be at least 6 characters",

@@ -46,6 +46,15 @@ export const usersApi = emptyApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
+
+    updateUser: builder.mutation({
+      query: ({ id, ...user }) => ({
+        url: `/users/${id}`,
+        method: "PUT",
+        body: user,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
+    }),
   }),
   overrideExisting: false,
 });
@@ -55,5 +64,6 @@ export const {
   useGetUserByIdQuery,
   useDeleteUserByIdMutation,
   usePostUserMutation,
-  useUserStatusChangeMutation
+  useUserStatusChangeMutation,
+  useUpdateUserMutation
 } = usersApi;
