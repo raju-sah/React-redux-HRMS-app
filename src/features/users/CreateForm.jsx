@@ -13,12 +13,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const UserCreateSchema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email(),
-    password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    company: z.string(),
+    firstName: z.string().trim().min(1, "First name is required"),
+    lastName: z.string().trim().min(1, "Last name is required"),
+    email: z.string().trim().email(),
+    password: z
+      .string()
+      .trim()
+      .min(1, "Password is required")
+      .min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().trim(),
+    company: z.string().trim(),
     age: z.coerce
       .number()
       .min(18, "Age must be at least 18 years old")
@@ -29,7 +33,7 @@ const UserCreateSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
-  
+
 export const CreateForm = ({ modalId }) => {
   const dispatch = useDispatch();
   const {

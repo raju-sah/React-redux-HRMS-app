@@ -14,21 +14,22 @@ import { z } from "zod";
 
 const UserEditSchema = z
   .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email(),
+    firstName: z.string().trim().min(1, "First name is required"),
+    lastName: z.string().trim().min(1, "Last name is required"),
+    email: z.string().trim().email(),
     age: z.coerce
       .number()
       .min(1, "Age is required")
       .min(18, "Age must be at least 18 years old")
       .max(120, "Age must be 120 or less"),
     status: z.boolean().default(false),
-    company: z.string(),
+    company: z.string().trim(),
     password: z
       .string()
+      .trim()
       .min(1, "Password is required")
       .min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

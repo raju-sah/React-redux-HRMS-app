@@ -1,43 +1,15 @@
-import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
-import Swal from "sweetalert2";
-import {Spinner} from "../Spinner"; // Ensure Spinner component exists or replace with your own
+import { Spinner } from "../Spinner";
+import { useDelete } from "../../../hooks/useDeleteHook";
 
 export const Delete = ({ itemId, deleteFn }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    if (isDeleting) return;
-
-    setIsDeleting(true);
-
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!',
-      });
-
-      if (isConfirmed && deleteFn) {
-        await deleteFn(itemId).unwrap(); // Pass the itemId to deleteFn
-        Swal.fire('Deleted!', 'Deleted successfully.', 'success');
-      }
-    } catch (error) {
-      Swal.fire('Error!', 'There was an issue deleting.', 'error');
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  const { isDeleting, handleDelete } = useDelete(deleteFn);
 
   return (
     <div className={`relative ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''}`}>
       <FaTrash
         className="text-danger text-lg cursor-pointer"
-        onClick={handleDelete}
+        onClick={() => handleDelete(itemId)}
         style={{ pointerEvents: isDeleting ? 'none' : 'auto' }}
       />
       {isDeleting && (

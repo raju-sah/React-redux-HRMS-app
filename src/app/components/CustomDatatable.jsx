@@ -4,7 +4,6 @@ import ToggleButton from "../../app/components/form/ToggleButton";
 import ExportCSV from "./csvDonload/ExportCSV";
 import Modal from "./form/Modal";
 import { Delete } from "./crud/Delete";
-import { nanoid } from "@reduxjs/toolkit";
 
 const CustomDataTable = ({
   data,

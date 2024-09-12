@@ -9,6 +9,7 @@ import Layout from "../app/components/layouts/Layout";
 import Setting from "../features/settings/Setting";
 import PersonalDetails from "../features/profile/PersonalDetails";
 import AuthenticatedRoute from "../features/login/AuthenticatedRoute";
+import CreateGroup from "../features/settings/CreateGroup";
 
 // Lazy load components
 const UsersList = lazy(() => import("../features/users/UsersList"));
@@ -39,7 +40,9 @@ const AppRoutes = () => {
             <Route path="/users-list" element={<UsersList />} />
             <Route path="/home" element={<Dashboard />} />
             <Route path="/settings" element={<Setting />} />
-            <Route path="profile" element={<PersonalDetails />} />
+            <Route path="/profile" element={<PersonalDetails />} />
+            <Route path="/create-group" element={<CreateGroup />} />
+
           </Route>
 
           {/* Catch-all route */}
