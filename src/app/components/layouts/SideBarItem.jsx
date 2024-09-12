@@ -1,15 +1,17 @@
-import { FiHome, FiPieChart, FiSettings, FiUsers, FiList, FiUserCheck, FiUserPlus, FiUserX } from 'react-icons/fi';
+import { FiHome, FiSettings, FiList, FiUserPlus, FiUserX, FiBookOpen,  } from 'react-icons/fi';
 import Sidebar from './Sidebar';
+import { BiCategory } from 'react-icons/bi';
 
 const SideBarItem = () => {
   const menuItems = [
     { label: 'Dashboard', icon: <FiHome size={15} />, path: '/dashboard' },
     {
-      label: 'Users',
-      icon: <FiUsers size={15} />,
+      label: 'Books',
+      icon: <FiBookOpen size={15} />,
       children: [
-        { label: 'Manage Users', path: '/users-list', icon: <FiList size={15} /> },
-        { label: 'Address', path: '/address', icon: <FiUserCheck size={15} /> },
+        { label: 'Books List', path: '/books-list', icon: <FiList size={15} /> },
+        { label: 'Categories', path: '/book-categories', icon: <BiCategory size={15} /> },
+        { label: 'Languages', path: '/languages', icon: <FiList size={15} /> },
         {
           label: 'User Groups',
           icon: <FiUserPlus size={15} />,
@@ -20,8 +22,7 @@ const SideBarItem = () => {
         }
       ]
     },
-    { label: 'Analytics', icon: <FiPieChart size={15} />, path: '/analytics' },
-    { label: 'Settings', icon: <FiSettings size={15} />, path: '/settings' }
+    { label: 'Settings', icon: <FiSettings size={15} />, path: '/settings' },
   ];
 
   return <Sidebar menuItems={menuItems} />;

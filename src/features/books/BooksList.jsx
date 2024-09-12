@@ -6,11 +6,12 @@ import {
   useGetUserByIdQuery,
   useUserStatusChangeMutation,
   useDeleteUserByIdMutation,
-} from "./usersApiSlice";
+} from "./booksApiSlice";
 import { View } from "./View";
 import { CreateForm } from "./CreateForm";
 import CustomDataTable from "../../app/components/CustomDatatable";
 import { EditForm } from "./EditForm";
+import DataTableSkeleton from "../../app/components/skeletons/DatatableSkeleton";
 
 const UsersList = () => {
   const { data: usersData, error, isLoading } = useGetUsersQuery();
@@ -60,14 +61,20 @@ const UsersList = () => {
 
   const filterColumns = ["firstName", "lastName", "email", "company", "age"];
 
-  return (
+  return isLoading ? (
+    <DataTableSkeleton />
+  ): (
+    
     <div className="max-w-6xl mx-auto p-2 mt-2">
-      <Modal modalId="createUserModalId" buttonText="Create" headingText="Create User">
+      <Modal
+        modalId="createUserModalId"
+        buttonText="Create"
+        headingText="Create User"
+      >
         <CreateForm />
       </Modal>
-      
-      {isLoading && <p className="text-center">Loading...</p>}
-      {error && <p>Error loading users: {error.message}</p>}
+
+     
       <CustomDataTable
         data={users}
         columns={columns}
@@ -91,7 +98,9 @@ const UsersList = () => {
             title: "User Edit",
             className: "text-secondary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <EditForm user={userById} isLoading={isUserLoading} />,
+            content: () => (
+              <EditForm user={userById} isLoading={isUserLoading} />
+            ),
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

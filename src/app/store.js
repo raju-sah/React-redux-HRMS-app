@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { usersApi } from "../features/users/usersApiSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import modalReducer from "../features/modal/modalSlice";
+import { usersApi } from "../features/books/booksApiSlice";
 
 const store = configureStore({
   reducer: {

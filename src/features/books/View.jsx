@@ -1,17 +1,16 @@
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export const View = ({ user, isLoading }) => {
   if (isLoading) {
     return (
       <div className="p-4">
-        <Skeleton height={40} className="mb-4" />
+        <div className="flex justify-end mb-4">
+          <Skeleton width={500} height={40} />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Skeleton height={30} />
-          <Skeleton height={30} />
-          <Skeleton height={30} />
-          <Skeleton height={30} />
-          <Skeleton height={30} />
+          <Skeleton className="mb-4" count={3} width={350} height={37} />
+          <Skeleton className="mb-4" count={2} width={350} height={37} />
         </div>
       </div>
     );
@@ -62,16 +61,24 @@ export const View = ({ user, isLoading }) => {
           <span className="text-sm text-gray-600 ml-2">{user.lastName}</span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">Email:</span>
+          <span className="text-sm font-bold text-gray-700 uppercase">
+            Email:
+          </span>
           <span className="text-sm text-gray-600 ml-2">{user.email}</span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">Age:</span>
+          <span className="text-sm font-bold text-gray-700 uppercase">
+            Age:
+          </span>
           <span className="text-sm text-gray-600 ml-2">{user.age}</span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">Company:</span>
-          <span className="text-sm text-gray-600 ml-2">{user.company || "N/A"}</span>
+          <span className="text-sm font-bold text-gray-700 uppercase">
+            Company:
+          </span>
+          <span className="text-sm text-gray-600 ml-2">
+            {user.company || "N/A"}
+          </span>
         </div>
       </div>
     </div>

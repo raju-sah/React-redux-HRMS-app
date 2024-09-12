@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import Skeleton from "react-loading-skeleton";
 import { FormInput } from "../../app/components/form/FormInput";
@@ -6,11 +6,11 @@ import { PasswordInput } from "../../app/components/form/PasswordInput";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
 import { useDispatch } from "react-redux";
-import { useUpdateUserMutation } from "./usersApiSlice";
 import useUpdateHook from "../../hooks/useUpdateHook";
 import { closeModal } from "../modal/modalSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useUpdateUserMutation } from "./booksApiSlice";
 
 const UserEditSchema = z
   .object({
@@ -38,10 +38,6 @@ const UserEditSchema = z
 export const EditForm = ({ user, isLoading, modalId }) => {
   const dispatch = useDispatch();
 
-  const MemoizedFormInput = memo(FormInput);
-  const MemoizedPasswordInput = memo(PasswordInput);
-  const MemoizedCheckBox = memo(CheckBox);
-
   const {
     register,
     handleSubmit,
@@ -49,6 +45,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
     setValue,
     reset,
   } = useForm({
+    resolver: zodResolver(UserEditSchema),
     defaultValues: {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
@@ -59,7 +56,6 @@ export const EditForm = ({ user, isLoading, modalId }) => {
       confirmPassword: user?.password || "",
       status: user?.status,
     },
-    resolver: zodResolver(UserEditSchema),
   });
 
   useMemo(() => {
@@ -95,48 +91,42 @@ export const EditForm = ({ user, isLoading, modalId }) => {
     [onSubmit, reset, user, modalId, dispatch]
   );
 
-  if (isLoading) {
-    return (
-      <div className="mx-auto p-2 mt-5 rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Skeleton height={30} className="col-span-2" />
-          <Skeleton height={30} className="col-span-2" />
-          <Skeleton height={30} className="col-span-1" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-6 gap- mt-4">
-          <Skeleton height={30} className="col-span-2" />
-          <Skeleton height={30} className="col-span-1" />
-          <Skeleton height={30} className="col-span-1" />
-        </div>
-        <Skeleton height={20} width={70} className="mt-4" />
-        <Skeleton height={30} width={70} className="mt-4" />
+  return isLoading ? (
+    <div className="w-full p-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+        <Skeleton height={30} className="col-span-2" />
+        <Skeleton height={30} className="col-span-2" />
+        <Skeleton height={30} className="col-span-1" />
       </div>
-    );
-  }
-
-  return (
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+        <Skeleton height={30} className="col-span-2" />
+        <Skeleton height={30} className="col-span-1" />
+        <Skeleton height={30} className="col-span-1" />
+      </div>
+      <Skeleton height={20} width={70} className="mb-4" />
+      <Skeleton height={30} width={70} />
+    </div>
+  ) : (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="mx-auto p-2 mt-5 rounded-lg"
+      className="w-full p-4"
     >
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <MemoizedFormInput
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+        <FormInput
           label="First Name"
           name="firstName"
           className="col-span-2"
           register={register}
           errors={errors}
         />
-
-        <MemoizedFormInput
+        <FormInput
           label="Last Name"
           name="lastName"
           className="col-span-2"
           register={register}
           errors={errors}
         />
-
-        <MemoizedFormInput
+        <FormInput
           label="Age"
           name="age"
           type="number"
@@ -145,8 +135,8 @@ export const EditForm = ({ user, isLoading, modalId }) => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <MemoizedFormInput
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
+        <FormInput
           label="Email"
           name="email"
           type="email"
@@ -154,8 +144,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           register={register}
           errors={errors}
         />
-
-        <MemoizedPasswordInput
+        <PasswordInput
           label="Password"
           name="password"
           type="password"
@@ -163,8 +152,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           register={register}
           errors={errors}
         />
-
-        <MemoizedPasswordInput
+        <PasswordInput
           label="Confirm Password"
           name="confirmPassword"
           type="password"
@@ -172,8 +160,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
           register={register}
           errors={errors}
         />
-
-        <MemoizedFormInput
+        <FormInput
           label="Company"
           name="company"
           type="text"
@@ -183,7 +170,7 @@ export const EditForm = ({ user, isLoading, modalId }) => {
         />
       </div>
 
-      <MemoizedCheckBox
+      <CheckBox
         label="Status"
         name="status"
         className="mt-4"

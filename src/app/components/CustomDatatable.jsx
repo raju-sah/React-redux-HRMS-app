@@ -42,7 +42,7 @@ const CustomDataTable = ({
   const customStyles = {
     rows: {
       style: {
-        minHeight: "45px", // override the row height
+        minHeight: "40px", // override the row height
       },
     },
     headCells: {
@@ -130,7 +130,7 @@ const CustomDataTable = ({
         subHeaderComponent={subHeaderComponent}
         persistTableHead
         fixedHeader
-        fixedHeaderScrollHeight="400px"
+        // fixedHeaderScrollHeight="400px"
         selectableRows
         // dense
         customStyles={customStyles}
