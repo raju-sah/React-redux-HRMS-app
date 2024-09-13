@@ -44,6 +44,15 @@ const SidebarItem = ({
 
   const isOpen = openMenus.has(item.label);
 
+  // const getMarginClass = () => {
+  //   if (depth === 1) {
+  //     return 'ml-4';
+  //   }
+  //   if (depth === 2) {
+  //     return 'ml-8';
+  //   }
+  //   return '';
+  // };
   const getMarginClass = () => `ml-${depth * 4 || 0}`;
 
   const handleClick = () => {

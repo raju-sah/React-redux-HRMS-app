@@ -13,11 +13,11 @@ import CustomDataTable from "../../app/components/CustomDatatable";
 import { EditForm } from "./EditForm";
 import DataTableSkeleton from "../../app/components/skeletons/DatatableSkeleton";
 
-const UsersList = () => {
-  const { data: usersData, error, isLoading } = useGetUsersQuery();
+const BooksList = () => {
+  const { data: booksData, error, isLoading } = useGetUsersQuery();
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const users = usersData?.items || [];
+  const books = booksData?.items || [];
 
   const [statusChange] = useUserStatusChangeMutation();
   const [deleteQuery] = useDeleteUserByIdMutation();
@@ -76,7 +76,7 @@ const UsersList = () => {
 
      
       <CustomDataTable
-        data={users}
+        data={books}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -109,4 +109,4 @@ const UsersList = () => {
   );
 };
 
-export default UsersList;
+export default BooksList;

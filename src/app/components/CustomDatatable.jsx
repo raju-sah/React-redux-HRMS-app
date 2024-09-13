@@ -131,7 +131,7 @@ const CustomDataTable = ({
         persistTableHead
         fixedHeader
         // fixedHeaderScrollHeight="400px"
-        selectableRows
+        // selectableRows // uncomment this line if you want to enable row selection
         // dense
         customStyles={customStyles}
       />
