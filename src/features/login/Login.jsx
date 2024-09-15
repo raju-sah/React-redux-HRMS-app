@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
-import { FormInput } from "../../app/components/form/FormInput";
 import { PasswordInput } from "../../app/components/form/PasswordInput";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import FormInput from "../../app/components/form/FormInput";
 
 const LoginSchema = z.object({
   username: z.string().min(1, "Username is required"),

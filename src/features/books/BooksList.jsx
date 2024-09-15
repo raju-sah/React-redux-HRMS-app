@@ -7,10 +7,10 @@ import {
   useUserStatusChangeMutation,
   useDeleteUserByIdMutation,
 } from "./booksApiSlice";
-import { View } from "./View";
-import { CreateForm } from "./CreateForm";
+import { View } from "./bookscategory/View";
+import { CreateForm } from "./Create";
 import CustomDataTable from "../../app/components/CustomDatatable";
-import { EditForm } from "./EditForm";
+import { EditForm } from "./bookscategory/Edit";
 import DataTableSkeleton from "../../app/components/skeletons/DatatableSkeleton";
 
 const BooksList = () => {
@@ -33,7 +33,6 @@ const BooksList = () => {
     {
       name: "SN",
       selector: (row, index) => index + 1,
-      sortable: true,
       width: "65px",
     },
     {
@@ -50,7 +49,7 @@ const BooksList = () => {
       name: "Age",
       selector: (row) => row.age || "N/A",
       sortable: true,
-      width: "70px",
+      width: "80px",
     },
     {
       name: "Company",
@@ -63,8 +62,7 @@ const BooksList = () => {
 
   return isLoading ? (
     <DataTableSkeleton />
-  ): (
-    
+  ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
         modalId="createUserModalId"
@@ -74,7 +72,6 @@ const BooksList = () => {
         <CreateForm />
       </Modal>
 
-     
       <CustomDataTable
         data={books}
         columns={columns}

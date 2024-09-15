@@ -1,5 +1,1 @@
-export default function Language() {
-  return (
-    <div>Language</div>
-  )
-}
+export const Language = ['English', 'Russian', 'Nepali', 'Hindi', 'Japanese','German'];

@@ -1,50 +1,48 @@
 import PropTypes from "prop-types";
-
-function FormInput({
+function FormTextArea({
   label,
-  register,
-  name,
-  type = "text",
-  errors = {},
   required = false,
-  className = "",
+  name,
+  rows = 3,
+  className,
+  register,
+  errors,
   ...props
 }) {
   return (
-    <div className={`mb-4 ${className}`}>
+    <div className={`${className}`}>
       <label
         htmlFor={name}
         className="block text-sm font-medium text-gray-700 mb-1"
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <input
-        {...register(name, { required })}
+      <textarea
         id={name}
-        type={type}
-        className={`w-full px-2 py-1.5 border rounded-lg focus:border-primary focus:outline-none ${
-          errors[name]
-            ? "border-red-500 focus:border-red-500"
-            : "border-gray-300 focus:border-blue-500"
-        }`}
+        name={name}
+        rows={rows}
+        className="w-full px-2 py-1.5 border rounded-lg focus:border-primary focus:outline-none"
+        {...register(name)}
         {...props}
-      />
-      {errors[name] && (
+      >
+      </textarea>
+      {errors && errors[name] && (
         <span className="text-red-500 text-sm">{errors[name].message}</span>
       )}
     </div>
   );
 }
 
-FormInput.propTypes = {
+FormTextArea.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  type: PropTypes.string,
   register: PropTypes.func.isRequired,
   errors: PropTypes.object,
   required: PropTypes.bool,
   className: PropTypes.string,
+  rows: PropTypes.number,
+  defaultValue: PropTypes.string,
   ...PropTypes.shape,
 };
 
-export default FormInput;
+export default FormTextArea;

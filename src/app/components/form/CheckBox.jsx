@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 const Checkbox = ({ label, name, register, className = "" }) => {
 
   return (
@@ -13,6 +14,13 @@ const Checkbox = ({ label, name, register, className = "" }) => {
       </label>
     </div>
   );
+};
+
+Checkbox.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  register: PropTypes.func.isRequired,
+  className: PropTypes.string,
 };
 
 export default Checkbox;

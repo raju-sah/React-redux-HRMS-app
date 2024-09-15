@@ -11,7 +11,7 @@ const SideBarItem = () => {
       children: [
         { label: 'Books List', path: '/books-list', icon: <FiList size={15} /> },
         { label: 'Categories', path: '/book-categories', icon: <BiCategory size={15} /> },
-        { label: 'Languages', path: '/languages', icon: <FiList size={15} /> },
+        { label: 'Authors', path: '/authors', icon: <FiList size={15} /> },
         {
           label: 'User Groups',
           icon: <FiUserPlus size={15} />,

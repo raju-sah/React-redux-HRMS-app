@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 const FormButton = ({ isLoading, text, disabled, ...props }) => {
   return (
     <button
@@ -15,4 +16,9 @@ const FormButton = ({ isLoading, text, disabled, ...props }) => {
   );
 };
 
+FormButton.propTypes = {
+  text: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool,
+  disabled: PropTypes.bool,
+};
 export default FormButton;

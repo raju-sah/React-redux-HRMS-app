@@ -2,11 +2,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RxCross2 } from "react-icons/rx";
 import { closeModal, openModal } from "../../../features/modal/modalSlice";
 import React from "react";
+import PropTypes from "prop-types";
+
 
 const Modal = ({
   modalId,
   headingText,
-  buttonText,
+  buttonText="",
   children,
   icon: Icon,
   className,
@@ -65,4 +67,13 @@ const Modal = ({
   );
 };
 
+Modal.propTypes = {
+  modalId: PropTypes.string.isRequired,
+  headingText: PropTypes.string.isRequired,
+  buttonText: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  icon: PropTypes.elementType,
+  className: PropTypes.string,
+  setbtnIdFunc: PropTypes.func,
+}
 export default Modal;

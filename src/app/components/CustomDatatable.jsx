@@ -4,12 +4,14 @@ import ToggleButton from "../../app/components/form/ToggleButton";
 import ExportCSV from "./csvDonload/ExportCSV";
 import Modal from "./form/Modal";
 import { Delete } from "./crud/Delete";
+import PropTypes from "prop-types";
+
 
 const CustomDataTable = ({
   data,
   columns,
   filterColumns,
-  statusColumn,
+  statusColumn={},
   modals = [],
   deleteButton,
 }) => {
@@ -112,7 +114,7 @@ const CustomDataTable = ({
       <DataTable
         columns={[
           ...columns,
-          statusColumn?.active && statusColumnConfig,
+          statusColumn && statusColumnConfig,
           actionColumn,
         ].filter(Boolean)}
         data={filteredItems}
@@ -137,6 +139,15 @@ const CustomDataTable = ({
       />
     </>
   );
+};
+
+CustomDataTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+  filterColumns: PropTypes.array.isRequired,
+  statusColumn: PropTypes.object,
+  modals: PropTypes.array,
+  deleteButton: PropTypes.object,
 };
 
 export default CustomDataTable;
