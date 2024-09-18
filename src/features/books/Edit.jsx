@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
@@ -9,53 +9,78 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormTextArea from "../../app/components/form/FormTextArea";
 import FormInput from "../../app/components/form/FormInput";
 import FormSelect from "../../app/components/form/FormSelect";
-import { usePostBookMutation } from "./booksApiSlice";
-import usePostHook from "../../hooks/usePostHook";
 import { useGetAuthorQuery } from "./author/authorApiSlice";
 import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
 import { languages } from "./Language";
+import useUpdateHook from "../../hooks/useUpdateHook";
+import EditSkeleton from "../../app/components/skeletons/EditSkeleton";
+import { useUpdateBookMutation } from "./booksApiSlice";
 
-const CreateSchema = z.object({
+const EditSchema = z.object({
   title: z.string().trim().min(1, "title is required"),
   author: z.string().trim().min(1, "Author is required"),
   category: z.string().trim().min(1, "Category is required"),
   publication: z.string().trim().min(1, "Publication is required"),
   isbn: z.coerce.number()
-  .int("ISBN must be an number")
+  .int("ISBN must be an integer")
   .refine(val => val.toString().length === 13, {
     message: "ISBN must be exactly 13 digits long.",
-  }),  edition: z.string().trim().min(1, "Edition is required"),
-  language: z.coerce.number().min(1, "Language is required"),
+  }),  language: z.coerce.number().min(1, "Language is required"),
   description: z.string().trim(),
   status: z.boolean().default(false),
 });
 
-export const Create = ({ modalId }) => {
+export const Edit = ({ data, isLoading, modalId }) => {
+  console.log(data);  
   const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     control,
+    setValue,
     reset,
   } = useForm({
-    resolver: zodResolver(CreateSchema),
+    resolver: zodResolver(EditSchema),
+    defaultValues: {
+      title: data?.title || "",
+      author: data?.author || "",
+      category: data?.category || "",
+      publication: data?.publication || "",
+      isbn: data?.isbn || "",
+      edition: data?.edition || "",
+      language: data?.language || "",
+      description: data?.description || "",
+      status: data?.status,
+    },
   });
+
+  useMemo(() => {
+    if (data) {
+      setValue("title", data.title || "");
+      setValue("author", data.author || "");
+      setValue("category", data.category || "");
+      setValue("publication", data.publication || "");
+      setValue("isbn", data.isbn || "");
+      setValue("edition", data.edition || "");
+      setValue("language", data.language || "");
+      setValue("description", data.description || "");
+      setValue("status", data.status);
+    }
+  }, [data, setValue]);
 
   const { data: authorData, isLoading: isAuthorLoading } = useGetAuthorQuery();
   const { data: booksCategoryData, isLoading: isBooksCategoryLoading } =
     useGetBookCategoryQuery();
-
-  const postQuery = usePostBookMutation;
-  const { onSubmit, isLoading, isSuccess, isError, error } =
-    usePostHook(postQuery);
+  const updateQuery = useUpdateBookMutation;
+  const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
-    (data) => {
-      data.popularity = Number(data.popularity);
-      data.status = data.status ? 1 : 0;
+    (datas) => {
+      datas.language = Number(datas.language);
+      datas.status = datas.status ? 1 : 0;
 
-      onSubmit(data).then(() => {
+      onSubmit( {id: data._uuid, ...datas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
@@ -63,7 +88,9 @@ export const Create = ({ modalId }) => {
     [onSubmit, reset, modalId, dispatch]
   );
 
-  return (
+  return isLoading ? (
+    <EditSkeleton />
+  ) : (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
@@ -166,8 +193,8 @@ export const Create = ({ modalId }) => {
         register={register}
       />
       <FormButton
-        disabled={isLoading || isSubmitting}
-        isLoading={isLoading}
+        disabled={isUpdating || isSubmitting}
+        isLoading={isUpdating || isSubmitting}
         text="Save"
       />
     </form>

@@ -13,14 +13,10 @@ import PopularityBadge from "../../../app/components/PopularityBadge";
 
 
 const Index = () => {
-  const {
-    data: booksCategoryData,
-    error,
-    isLoading,
-  } = useGetBookCategoryQuery();
+  const {data: booksCategoryData,isLoading} = useGetBookCategoryQuery();
+  const booksCategory = booksCategoryData?.items || [];
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const booksCategory = booksCategoryData?.items || [];
 
   const [statusChange] = useBookCategoryStatusChangeMutation();
   const [deleteQuery] = useDeleteBookCategoryByIdMutation();
@@ -66,7 +62,7 @@ const Index = () => {
           "N/A"
         ),
       sortable: false,
-      width: "180px",
+      width: "auto",
     },
     {
       name: "Age Group",

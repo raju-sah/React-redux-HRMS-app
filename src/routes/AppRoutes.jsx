@@ -13,9 +13,9 @@ import CreateGroup from "../features/settings/CreateGroup";
 import { HashLoader } from "react-spinners";
 import CategoryIndex from "../features/books/bookscategory/Index";
 import AuthorIndex from "../features/books/author/Index";
+import BookIndex from "../features/books/Index";
   
 // Lazy load components
-const UsersList = lazy(() => import("../features/books/BooksList"));
 const Login = lazy(() => import("../features/login/Login"));
 const Dashboard = lazy(() => import("../app/components/layouts/Dashboard"));
 
@@ -33,7 +33,7 @@ const DelayedContent = ({ children }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(true);
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -59,7 +59,7 @@ const AppRoutes = () => {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/books-list" element={<UsersList />} />
+              <Route path="/books" element={<BookIndex />} />
               <Route path="/book-categories" element={<CategoryIndex />} />
               <Route path="/authors" element={<AuthorIndex />} />
 

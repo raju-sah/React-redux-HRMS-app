@@ -9,7 +9,7 @@ const SideBarItem = () => {
       label: 'Books',
       icon: <FiBookOpen size={15} />,
       children: [
-        { label: 'Books List', path: '/books-list', icon: <FiList size={15} /> },
+        { label: 'Books List', path: '/books', icon: <FiList size={15} /> },
         { label: 'Categories', path: '/book-categories', icon: <BiCategory size={15} /> },
         { label: 'Authors', path: '/authors', icon: <FiList size={15} /> },
         {

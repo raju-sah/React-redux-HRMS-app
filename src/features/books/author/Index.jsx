@@ -42,7 +42,7 @@ const Index = () => {
       name: "Full Name",
       selector: (row) => row.firstName + " " + row.lastName || "N/A",
       sortable: true,
-      width: "150px",
+      width: "auto",
     },
     {
       name: "Nationality",
@@ -53,7 +53,7 @@ const Index = () => {
         return country ? country.name : "N/A";
       },
       sortable: true,
-      width: "230px",
+      width: "auto",
     },
     {
       name: "Date of Birth",

@@ -1,69 +1,69 @@
 import { emptyApi } from "../../services/GetApiService";
 
-export const usersApi = emptyApi.injectEndpoints({
+export const booksApi = emptyApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query({
-      query: () => "/users",
+    getBooks: builder.query({
+      query: () => "/books",
       providesTags: (result) =>
         result
           ? [
-              ...result.items.map(({ _uuid }) => ({ type: "User", id: _uuid })),
-              { type: "User", id: "LIST" },
+              ...result.items.map(({ _uuid }) => ({ type: "Books", id: _uuid })),
+              { type: "Books", id: "LIST" },
             ]
-          : [{ type: "User", id: "LIST" }],
+          : [{ type: "Books", id: "LIST" }],
     }),
     
-    getUserById: builder.query({
-      query: (id) => `/users/${id}`,
-      providesTags: (result, error, id) => [{ type: "User", id }],
+    getBookById: builder.query({
+      query: (id) => `/books/${id}`,
+      providesTags: (result, error, id) => [{ type: "Books", id }],
     }),
-    deleteUserById: builder.mutation({
+    deleteBookById: builder.mutation({
       query: (id) => ({
-        url: `/users/${id}`,
+        url: `/books/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: (result, error, id) => [
-        { type: "User", id },
-        { type: "User", id: "LIST" },
+        { type: "Books", id },
+        { type: "Books", id: "LIST" },
       ],
     }),
 
 
-    postUser: builder.mutation({
-      query: (user) => ({
-        url: "/users",
+    postBook: builder.mutation({
+      query: (data) => ({
+        url: "/books",
         method: "POST",
-        body: [user],
+        body: [data],
       }),
-      invalidatesTags: [{ type: "User", id: "LIST" }],
+      invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
 
-    userStatusChange: builder.mutation({
+    bookStatusChange: builder.mutation({
       query: ({ id, status }) => ({
-        url: `/users/${id}`, 
+        url: `/books/${id}`, 
         method: "PUT",
         body: { status },
       }),
-      invalidatesTags: [{ type: "User", id: "LIST" }],
+      invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
 
-    updateUser: builder.mutation({
-      query: ({ id, ...user }) => ({
-        url: `/users/${id}`,
+    updateBook: builder.mutation({
+      query: ({ id, ...datas }) => ({
+        url: `/books/${id}`,
         method: "PUT",
-        body: user,
+        body: datas,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "User", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: "Books", id }],
     }),
   }),
   overrideExisting: false,
 });
 
 export const {
-  useGetUsersQuery,
-  useGetUserByIdQuery,
-  useDeleteUserByIdMutation,
-  usePostUserMutation,
-  useUserStatusChangeMutation,
-  useUpdateUserMutation
-} = usersApi;
+  useGetBooksQuery,
+  useGetBookByIdQuery,
+  useDeleteBookByIdMutation,
+  usePostBookMutation,
+  useBookStatusChangeMutation,
+  useUpdateBookMutation
+} = booksApi;

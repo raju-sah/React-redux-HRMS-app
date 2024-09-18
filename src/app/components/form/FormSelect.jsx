@@ -17,7 +17,7 @@ function FormSelect({
   } = useController({
     name,
     control,
-    defaultValue: isMulti ? [] : null,
+    defaultValue: isMulti ? [] : '',
   });
 
   const handleChange = (selectedOption) => {

@@ -33,7 +33,7 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
       />
       <div
         className={`w-10 h-6 bg-gray-200 rounded-full peer-focus:ring-4 peer-focus:ring-purple-300 transition duration-200 ${
-          toggled ? "bg-purple-500" : "bg-gray-200"
+          toggled ? "bg-purple-500" : "bg-gray-400"
         }`}
       >
         <div

@@ -8,11 +8,15 @@ import { closeModal } from "../../modal/modalSlice";
 import FormInput from "../../../app/components/form/FormInput";
 import FormMultiSelect from "../../../app/components/form/FormSelect";
 import { ageGroupOptions } from "./AgeGroup";
-import { useUpdateBookCategoryMutation } from "./booksCategoryApiSlice";
+import {
+  useGetBookCategoryQuery,
+  useUpdateBookCategoryMutation,
+} from "./booksCategoryApiSlice";
 import FormTextArea from "../../../app/components/form/FormTextArea";
 import Checkbox from "../../../app/components/form/CheckBox";
 import FormButton from "../../../app/components/form/FormButton";
 import useUpdateHook from "../../../hooks/useUpdateHook";
+import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
 
 const EditSchema = z.object({
   categoryName: z.string().trim().min(1, "Category name is required"),
@@ -61,6 +65,16 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const updateQuery = useUpdateBookCategoryMutation;
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
+  const { data: booksCategoryData } = useGetBookCategoryQuery();
+
+  const booksCategory = booksCategoryData?.items || [];
+  const formattedBooksCategory = booksCategory.map(
+    ({ _uuid, categoryName }) => ({
+      _uuid,
+      categoryName,
+    })
+  );
+
   const handleFormSubmit = useCallback(
     (datas) => {
       datas.popularity = Number(datas.popularity);
@@ -75,20 +89,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
   );
 
   return isLoading ? (
-    <div className="w-full p-4">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
-        <Skeleton height={30} className="col-span-1" />
-      </div>
-      <Skeleton height={20} width={70} className="mb-4" />
-      <Skeleton height={30} width={70} />
-    </div>
+    <EditSkeleton />
   ) : (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full p-4">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
@@ -136,9 +137,9 @@ export const Edit = ({ data, isLoading, modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          options={ageGroupOptions.map((genre, index) => ({
-            value: index,
-            label: genre,
+          options={formattedBooksCategory.map((genre) => ({
+            value: genre._uuid,
+            label: genre.categoryName,
           }))}
         />
         <FormTextArea
