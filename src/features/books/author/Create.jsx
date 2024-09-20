@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePostAuthorMutation } from "./authorApiSlice";
 import Checkbox from "../../../app/components/form/CheckBox";
@@ -12,21 +11,9 @@ import FormInput from "../../../app/components/form/FormInput";
 import FormMultiSelect from "../../../app/components/form/FormSelect";
 import FormTextArea from "../../../app/components/form/FormTextArea";
 import { countries } from "../../../enums/Country";
+import { authorSchema } from "../../../validation/authorSchema";
 
-const CreateSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required").max(50),
-  lastName: z.string().trim().min(1, "Last name is required").max(50),
-  nationality: z.string().trim().min(1, "Nationality is required"),
-  dob: z.string().date().trim().min(1, "Date of birth is required"),
-  address: z.string().trim().min(1, "Address is required").max(100),
-  description: z.string().trim().max(300),
-  popularity: z.coerce
-    .number()
-    .min(1, "Popularity is required")
-    .max(100, "Popularity must be 100 or less"),
-  status: z.boolean().default(false),
-});
-
+const schema = authorSchema();
 export const Create = ({ modalId }) => {
   const dispatch = useDispatch();
   const {
@@ -36,17 +23,15 @@ export const Create = ({ modalId }) => {
     control,
     reset,
   } = useForm({
-    resolver: zodResolver(CreateSchema),
+    resolver: zodResolver(schema),
   });
 
   const postQuery = usePostAuthorMutation;
-  const { onSubmit, isLoading, isSuccess, isError, error } =
-    usePostHook(postQuery);
+  const { onSubmit, isLoading } = usePostHook(postQuery);
 
   const handleFormSubmit = useCallback(
     (data) => {
       data.popularity = Number(data.popularity);
-      data.status = data.status ? 1 : 0;
 
       onSubmit(data).then(() => {
         reset();

@@ -17,8 +17,8 @@ import { languages } from "./Language";
 
 const CreateSchema = z.object({
   title: z.string().trim().min(1, "title is required").max(100),
-  author: z.string().trim().min(1, "Author is required"),
-  category: z.string().trim().min(1, "Category is required"),
+  author: z.array(z.string()).min(1, "Author is required"),
+  category: z.array(z.string()).min(1, "Category is required"),
   publication: z.string().trim().min(1, "Publication is required").max(100),
   isbn: z.coerce
     .number()
@@ -49,13 +49,11 @@ export const Create = ({ modalId }) => {
     useGetBookCategoryQuery();
 
   const postQuery = usePostBookMutation;
-  const { onSubmit, isLoading, isSuccess, isError, error } =
-    usePostHook(postQuery);
+  const { onSubmit, isLoading } = usePostHook(postQuery);
 
   const handleFormSubmit = useCallback(
     (data) => {
       data.popularity = Number(data.popularity);
-      data.status = data.status ? 1 : 0;
 
       onSubmit(data).then(() => {
         reset();
@@ -86,6 +84,7 @@ export const Create = ({ modalId }) => {
           name="author"
           control={control}
           required={true}
+          isMulti={true}
           className="col-span-2"
           options={
             !isAuthorLoading && authorData?.items
@@ -104,7 +103,7 @@ export const Create = ({ modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          isMulti={false}
+          isMulti={true}
           options={
             !isBooksCategoryLoading && booksCategoryData?.items
               ? booksCategoryData.items
@@ -133,7 +132,6 @@ export const Create = ({ modalId }) => {
           placeholder="0"
           required={true}
           min={0}
-          max={100}
           register={register}
           errors={errors}
           className="col-span-2"

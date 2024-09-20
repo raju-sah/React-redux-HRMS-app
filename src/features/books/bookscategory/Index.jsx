@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
-
 import Modal from "../../../app/components/form/Modal";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
 import CustomDataTable from "../../../app/components/CustomDatatable";
@@ -8,15 +7,18 @@ import { Create } from "./Create";
 import { Edit } from "./Edit";
 import { View } from "./View";
 import { ageGroupOptions } from "./AgeGroup";
-import { useBookCategoryStatusChangeMutation, useDeleteBookCategoryByIdMutation, useGetBookCategoryByIdQuery, useGetBookCategoryQuery } from "./booksCategoryApiSlice";
+import {
+  useBookCategoryStatusChangeMutation,
+  useDeleteBookCategoryByIdMutation,
+  useGetBookCategoryByIdQuery,
+  useGetBookCategoryQuery,
+} from "./booksCategoryApiSlice";
 import PopularityBadge from "../../../app/components/PopularityBadge";
 
-
 const Index = () => {
-  const {data: booksCategoryData,isLoading} = useGetBookCategoryQuery();
+  const { data: booksCategoryData, isLoading } = useGetBookCategoryQuery();
   const booksCategory = booksCategoryData?.items || [];
   const [selectedUserId, setSelectedUserId] = useState(null);
-
 
   const [statusChange] = useBookCategoryStatusChangeMutation();
   const [deleteQuery] = useDeleteBookCategoryByIdMutation();
@@ -30,38 +32,18 @@ const Index = () => {
     {
       name: "SN",
       selector: (row, index) => index + 1,
-      width: "55px",
+      width: "60px",
     },
     {
       name: "Category Name",
-      selector: (row) => row.categoryName || "N/A",
+      selector: (row) => row.categoryName || "",
       sortable: true,
-      width: "170px",
+      width: "auto",
     },
     {
       name: "Popularity",
-      selector: (row) => <PopularityBadge popularity={row.popularity} /> || "N/A",
+      selector: (row) => <PopularityBadge popularity={row.popularity} /> || "",
       sortable: true,
-      width: "130px",
-    },
-    {
-      name: "Related Genres",
-      selector: (row) =>
-        row.relatedGenres && row.relatedGenres.length > 0 ? (
-          <div className="flex flex-wrap">
-            {row.relatedGenres.map((genre, index) => (
-              <span
-                key={index}
-                className="bg-purple-400 py-1 px-1 rounded-md mt-1 mb-1 mr-1"
-              >
-                {ageGroupOptions[genre] || "N/A"}
-              </span>
-            ))}
-          </div>
-        ) : (
-          "N/A"
-        ),
-      sortable: false,
       width: "auto",
     },
     {
@@ -74,14 +56,14 @@ const Index = () => {
                 key={index}
                 className="bg-purple-400 py-1 px-1 rounded-md mt-1 mb-1 mr-1"
               >
-                {ageGroupOptions[ageGroup] || "N/A"}
+                {ageGroupOptions[ageGroup] || ""}
               </span>
             ))}
           </div>
         ) : (
-          "N/A"
+          ""
         ),
-      width: "180px",
+      width: "auto",
     },
   ];
 
@@ -126,9 +108,7 @@ const Index = () => {
             title: "Book Category Edit",
             className: "text-secondary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => (
-              <Edit data={userById} isLoading={isUserLoading} />
-            ),
+            content: () => <Edit data={userById} isLoading={isUserLoading} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

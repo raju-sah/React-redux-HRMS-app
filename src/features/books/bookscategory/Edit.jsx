@@ -1,8 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { closeModal } from "../../modal/modalSlice";
 import FormInput from "../../../app/components/form/FormInput";
 import FormMultiSelect from "../../../app/components/form/FormSelect";
@@ -16,20 +15,13 @@ import Checkbox from "../../../app/components/form/CheckBox";
 import FormButton from "../../../app/components/form/FormButton";
 import useUpdateHook from "../../../hooks/useUpdateHook";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
+import { BookCategorySchema } from "../../../validation/bookCategorySchema";
 
-const EditSchema = z.object({
-  categoryName: z.string().trim().min(1, "Category name is required").max(40),
-  ageGroup: z.array(z.number()).min(1, "Age group is required"),
-  relatedGenres: z.array(z.number()).min(1, "Related genres is required"),
-  description: z.string().trim().max(300),
-  popularity: z.coerce
-    .number()
-    .min(1, "Popularity is required")
-    .max(100, "Popularity must be 100 or less"),
-  status: z.boolean().default(false),
-});
 export const Edit = ({ data, isLoading, modalId }) => {
   const dispatch = useDispatch();
+  const { data: categoryData } = useGetBookCategoryQuery();
+
+  const schema = BookCategorySchema(categoryData, data?.categoryName);
 
   const {
     register,
@@ -39,7 +31,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     setValue,
     reset,
   } = useForm({
-    resolver: zodResolver(EditSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       categoryName: data?.categoryName || "",
       ageGroup: data?.ageGroup || [],
@@ -50,7 +42,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     },
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (data) {
       setValue("categoryName", data.categoryName || "");
       setValue("ageGroup", data.ageGroup || []);
@@ -64,29 +56,18 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const updateQuery = useUpdateBookCategoryMutation;
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
-  const { data: booksCategoryData } = useGetBookCategoryQuery();
-
-  const booksCategory = booksCategoryData?.items || [];
-  const formattedBooksCategory = booksCategory.map(
-    ({ _uuid, categoryName }) => ({
-      _uuid,
-      categoryName,
-    })
-  );
-
   const handleFormSubmit = useCallback(
     (datas) => {
       datas.popularity = Number(datas.popularity);
-      datas.status = datas.status ? 1 : 0;
-
+  
       onSubmit({ id: data._uuid, ...datas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
     },
-    [onSubmit, reset, data, modalId, dispatch]
+    [onSubmit, reset, modalId, dispatch]
   );
-
+  
   return isLoading ? (
     <EditSkeleton />
   ) : (
@@ -115,6 +96,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
             label: group,
           }))}
         />
+
         <FormInput
           label="Popularity"
           type="number"
@@ -125,7 +107,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           required={true}
           register={register}
           errors={errors}
-          className="col-span-1"
+          className="col-span-2"
           onInput={(e) => {
             e.target.value = e.target.value.slice(0, 3); // maxlength of 3
           }}
@@ -133,18 +115,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <FormMultiSelect
-          label="Related Genres"
-          name="relatedGenres"
-          isMulti={true}
-          control={control}
-          required={true}
-          className="col-span-2"
-          options={formattedBooksCategory.map((genre) => ({
-            value: genre._uuid,
-            label: genre.categoryName,
-          }))}
-        />
         <FormTextArea
           label="Description"
           name="description"

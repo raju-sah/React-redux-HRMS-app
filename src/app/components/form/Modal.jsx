@@ -12,7 +12,7 @@ const Modal = ({
   icon: Icon,
   className,
   setbtnIdFunc,
-  maxHeight = "100vh", // New prop for controlling max height
+  maxHeight = "80vh", // New prop for controlling max height
 }) => {
   const dispatch = useDispatch();
   const modalState = useSelector((state) => state.modal.openModals[modalId]);

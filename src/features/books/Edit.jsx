@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
@@ -80,7 +80,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const handleFormSubmit = useCallback(
     (datas) => {
       datas.language = Number(datas.language);
-      datas.status = datas.status ? 1 : 0;
 
       onSubmit({ id: data._uuid, ...datas }).then(() => {
         reset();

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
@@ -9,7 +10,7 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
   }, [isToggled]);
 
   const handleToggle = useCallback(() => {
-    const newStatus = !toggled ? 1 : 0;
+    const newStatus = !toggled;
 
     toast.promise(
       StatusChange({ id: userId, status: newStatus }).unwrap(),
@@ -19,7 +20,7 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
         error: 'Failed to change status of user: Unknown error',
       }
     ).then(() => {
-      setToggled(!toggled);
+      setToggled(newStatus); // Set the new boolean status
     });
   }, [toggled, userId, StatusChange]);
 
@@ -46,4 +47,9 @@ const ToggleButton = ({ userId, isToggled, StatusChange }) => {
   );
 };
 
+ToggleButton.propTypes = {
+  userId: PropTypes.string.isRequired,
+  isToggled: PropTypes.bool.isRequired,
+  StatusChange: PropTypes.func.isRequired,
+};
 export default ToggleButton;

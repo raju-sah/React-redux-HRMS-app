@@ -62,7 +62,7 @@ const CustomDataTable = ({
       cell: (row) => (
         <ToggleButton
           userId={statusColumn.id(row)}
-          isToggled={row.status === 1}
+          isToggled={row.status}
           StatusChange={statusColumn.onChange}
         />
       ),

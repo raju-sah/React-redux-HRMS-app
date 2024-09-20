@@ -1,9 +1,7 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import Skeleton from "react-loading-skeleton";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { closeModal } from "../../modal/modalSlice";
 import FormInput from "../../../app/components/form/FormInput";
 import { useUpdateAuthorMutation } from "./authorApiSlice";
@@ -14,20 +12,9 @@ import useUpdateHook from "../../../hooks/useUpdateHook";
 import { countries } from "../../../enums/Country";
 import FormSelect from "../../../app/components/form/FormSelect";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
+import { authorSchema } from "../../../validation/authorSchema";
 
-const EditSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required").max(50),
-  lastName: z.string().trim().min(1, "Last name is required").max(50),
-  nationality: z.string().trim().min(1, "Nationality is required"),
-  dob: z.string().date().trim().min(1, "Date of birth is required"),
-  address: z.string().trim().min(1, "Address is required").max(100),
-  description: z.string().trim().max(300),
-  popularity: z.coerce
-    .number()
-    .min(1, "Popularity is required")
-    .max(100, "Popularity must be 100 or less"),
-  status: z.boolean().default(false),
-});
+const schema = authorSchema();
 export const Edit = ({ data, isLoading, modalId }) => {
   const dispatch = useDispatch();
 
@@ -39,7 +26,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     setValue,
     reset,
   } = useForm({
-    resolver: zodResolver(EditSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       firstName: data?.firstName || "",
       lastName: data?.lastName || "",
@@ -52,7 +39,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     },
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (data) {
       setValue("firstName", data.firstName || "");
       setValue("lastName", data.lastName || "");
@@ -66,19 +53,18 @@ export const Edit = ({ data, isLoading, modalId }) => {
   }, [data, setValue]);
 
   const updateQuery = useUpdateAuthorMutation;
-  const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery); // track mutation loading
+  const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
     (datas) => {
       datas.popularity = Number(datas.popularity);
-      datas.status = datas.status ? 1 : 0;
 
       onSubmit({ id: data._uuid, ...datas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
     },
-    [onSubmit, reset, data._uuid, modalId, dispatch]
+    [onSubmit, reset, modalId, dispatch]
   );
 
   return isLoading ? (
@@ -177,8 +163,8 @@ export const Edit = ({ data, isLoading, modalId }) => {
       />
 
       <FormButton
-        disabled={isUpdating || isSubmitting} // disable button when form is submitting or mutation is loading
-        isLoading={isUpdating || isSubmitting} // show "Saving..." state
+        disabled={isUpdating || isSubmitting}
+        isLoading={isUpdating || isSubmitting}
         text="Save"
       />
     </form>
