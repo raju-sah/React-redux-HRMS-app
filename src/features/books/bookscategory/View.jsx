@@ -1,23 +1,10 @@
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ageGroupOptions } from "./AgeGroup";
+import ViewSkeleton from "../../../app/components/skeletons/ViewSkeleton";
 
 export const View = ({ data, isLoading }) => {
-  if (isLoading) {
-    return (
-      <div className="p-4">
-        <div className="flex justify-end mb-4">
-          <Skeleton width={500} height={40} />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Skeleton className="mb-4" count={3} width={350} height={37} />
-          <Skeleton className="mb-4" count={2} width={350} height={37} />
-        </div>
-      </div>
-    );
-  }
 
-  if (!data) return null;
+  if (isLoading || !data) return <ViewSkeleton />;
 
   return (
     <div className="p-4">
@@ -50,24 +37,24 @@ export const View = ({ data, isLoading }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Category Name:
-          </span>
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Category Name
+          </div>
           <span className="text-sm text-gray-600 ml-2">
             {data.categoryName}
           </span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Popularity:
-          </span>
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Popularity
+          </div>
           <span className="text-sm text-gray-600 ml-2">{data.popularity}</span>
         </div>
 
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Related Genres:
-          </span>
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Related Genres
+          </div>
           <span className="text-sm text-gray-600 ml-2">
             <div className="flex flex-wrap">
               {data.relatedGenres.map((genre, index) => (
@@ -82,9 +69,9 @@ export const View = ({ data, isLoading }) => {
           </span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Age Group:
-          </span>
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Age Group
+          </div>
           <span className="text-sm text-gray-600 ml-2">
             {" "}
             <div className="flex flex-wrap">
@@ -101,9 +88,9 @@ export const View = ({ data, isLoading }) => {
         </div>
       </div>
       <div className="mt-4">
-        <span className="text-sm font-bold text-gray-700 uppercase">
-          Description:
-        </span>
+        <div className="text-sm font-bold text-gray-700 uppercase">
+          Description
+        </div>
         <span className="text-sm text-gray-600 ml-2">
           {data.description || "N/A"}
         </span>

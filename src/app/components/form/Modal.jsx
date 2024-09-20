@@ -4,15 +4,15 @@ import { closeModal, openModal } from "../../../features/modal/modalSlice";
 import React from "react";
 import PropTypes from "prop-types";
 
-
 const Modal = ({
   modalId,
   headingText,
-  buttonText="",
+  buttonText = "",
   children,
   icon: Icon,
   className,
   setbtnIdFunc,
+  maxHeight = "100vh", // New prop for controlling max height
 }) => {
   const dispatch = useDispatch();
   const modalState = useSelector((state) => state.modal.openModals[modalId]);
@@ -45,7 +45,7 @@ const Modal = ({
       )}
       {modalState && modalState.isOpen && (
         <div className="fixed inset-0 bg-primary bg-opacity-60 flex items-center justify-center p-4 z-10">
-          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full">
+          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full flex flex-col max-h-[90vh]">
             <div className="flex justify-between p-3 bg-[#021526] text-white">
               <h2 className="text-lg font-bold">{headingText}</h2>
               <button
@@ -55,9 +55,9 @@ const Modal = ({
                 <RxCross2 className="w-8 h-6" />
               </button>
             </div>
-            <div className="px-6 pb-6">
-              {typeof children === 'function' 
-                ? children({ modalId }) 
+            <div className={`px-6 pb-6 overflow-y-auto`} style={{ maxHeight }}>
+              {typeof children === 'function'
+                ? children({ modalId })
                 : React.cloneElement(children, { modalId })}
             </div>
           </div>
@@ -75,5 +75,7 @@ Modal.propTypes = {
   icon: PropTypes.elementType,
   className: PropTypes.string,
   setbtnIdFunc: PropTypes.func,
-}
+  maxHeight: PropTypes.string,
+};
+
 export default Modal;

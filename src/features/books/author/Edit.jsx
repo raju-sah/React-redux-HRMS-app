@@ -13,14 +13,15 @@ import FormButton from "../../../app/components/form/FormButton";
 import useUpdateHook from "../../../hooks/useUpdateHook";
 import { countries } from "../../../enums/Country";
 import FormSelect from "../../../app/components/form/FormSelect";
+import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
 
 const EditSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required").max(50),
+  lastName: z.string().trim().min(1, "Last name is required").max(50),
   nationality: z.string().trim().min(1, "Nationality is required"),
   dob: z.string().date().trim().min(1, "Date of birth is required"),
-  address: z.string().trim().min(1, "Address is required"),
-  description: z.string().trim(),
+  address: z.string().trim().min(1, "Address is required").max(100),
+  description: z.string().trim().max(300),
   popularity: z.coerce
     .number()
     .min(1, "Popularity is required")
@@ -81,20 +82,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
   );
 
   return isLoading ? (
-    <div className="w-full p-4">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
-        <Skeleton height={30} className="col-span-1" />
-      </div>
-      <Skeleton height={20} width={70} className="mb-4" />
-      <Skeleton height={30} width={70} />
-    </div>
+    <EditSkeleton />
   ) : (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full p-4">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
@@ -106,6 +94,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={50}
         />
         <FormInput
           label="Last Name"
@@ -115,6 +104,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={50}
         />
         <FormSelect
           label="Nationality"
@@ -147,6 +137,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
+          maxLength={100}
         />
         <FormInput
           label="Popularity"
@@ -159,6 +150,9 @@ export const Edit = ({ data, isLoading, modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 3);
+          }}
         />
       </div>
 
@@ -171,6 +165,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           placeholder="Description"
           register={register}
           errors={errors}
+          maxLength={300}
         />
       </div>
 
@@ -181,7 +176,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
         register={register}
       />
 
-<FormButton
+      <FormButton
         disabled={isUpdating || isSubmitting} // disable button when form is submitting or mutation is loading
         isLoading={isUpdating || isSubmitting} // show "Saving..." state
         text="Save"

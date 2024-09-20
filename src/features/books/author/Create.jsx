@@ -14,12 +14,12 @@ import FormTextArea from "../../../app/components/form/FormTextArea";
 import { countries } from "../../../enums/Country";
 
 const CreateSchema = z.object({
-  firstName: z.string().trim().min(1, "First name is required"),
-  lastName: z.string().trim().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required").max(50),
+  lastName: z.string().trim().min(1, "Last name is required").max(50),
   nationality: z.string().trim().min(1, "Nationality is required"),
   dob: z.string().date().trim().min(1, "Date of birth is required"),
-  address: z.string().trim().min(1, "Address is required"),
-  description: z.string().trim(),
+  address: z.string().trim().min(1, "Address is required").max(100),
+  description: z.string().trim().max(300),
   popularity: z.coerce
     .number()
     .min(1, "Popularity is required")
@@ -70,6 +70,7 @@ export const Create = ({ modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={50}
         />
         <FormInput
           label="Last Name"
@@ -79,6 +80,7 @@ export const Create = ({ modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={50}
         />
 
         <FormMultiSelect
@@ -113,6 +115,7 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
+          maxLength={100}
         />
 
         <FormInput
@@ -126,6 +129,9 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 3);
+          }}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -136,6 +142,7 @@ export const Create = ({ modalId }) => {
           placeholder="Description"
           register={register}
           errors={errors}
+          maxLength={300}
         />
       </div>
       <Checkbox

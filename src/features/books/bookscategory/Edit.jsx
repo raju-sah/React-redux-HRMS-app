@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import Skeleton from "react-loading-skeleton";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,10 +18,10 @@ import useUpdateHook from "../../../hooks/useUpdateHook";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
 
 const EditSchema = z.object({
-  categoryName: z.string().trim().min(1, "Category name is required"),
+  categoryName: z.string().trim().min(1, "Category name is required").max(40),
   ageGroup: z.array(z.number()).min(1, "Age group is required"),
   relatedGenres: z.array(z.number()).min(1, "Related genres is required"),
-  description: z.string().trim(),
+  description: z.string().trim().max(300),
   popularity: z.coerce
     .number()
     .min(1, "Popularity is required")
@@ -101,6 +100,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={40}
         />
 
         <FormMultiSelect
@@ -120,12 +120,15 @@ export const Edit = ({ data, isLoading, modalId }) => {
           type="number"
           name="popularity"
           placeholder="0"
+          min="0"
+          max="100"
           required={true}
-          min={0}
-          max={100}
           register={register}
           errors={errors}
           className="col-span-1"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 3); // maxlength of 3
+          }}
         />
       </div>
 
@@ -150,6 +153,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           placeholder="Description"
           register={register}
           errors={errors}
+          maxLength={300}
         />
       </div>
 

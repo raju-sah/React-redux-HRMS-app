@@ -1,22 +1,19 @@
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { languages } from "./Language";
+import ViewSkeleton from "../../app/components/skeletons/ViewSkeleton";
+import { useGetBookCategoryByIdQuery } from "./bookscategory/booksCategoryApiSlice";
+import { useGetAuthorByIdQuery } from "./author/authorApiSlice";
 
 export const View = ({ data, isLoading }) => {
-  if (isLoading) {
-    return (
-      <div className="p-4">
-        <div className="flex justify-end mb-4">
-          <Skeleton width={500} height={40} />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Skeleton className="mb-4" count={3} width={350} height={37} />
-          <Skeleton className="mb-4" count={2} width={350} height={37} />
-        </div>
-      </div>
-    );
-  }
+  const { data: author, isLoading: isLoadingAuthor } = useGetAuthorByIdQuery(
+    data?.author,
+    { skip: !data?.author }
+  );
+  const { data: category, isLoading: isLoadingCategory } =
+    useGetBookCategoryByIdQuery(data?.category, { skip: !data?.category });
 
-  if (!data) return null;
+  if (isLoading || !data || isLoadingAuthor || isLoadingCategory)
+    return <ViewSkeleton />;
 
   return (
     <div className="p-4">
@@ -24,8 +21,8 @@ export const View = ({ data, isLoading }) => {
         <span
           className={`ml-auto inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
             data.status === 1
-              ? "bg-green-50 text-green-700 ring-green-600/20"
-              : "bg-red-50 text-red-700 ring-red-600/20"
+              ? "bg-green-200 text-green-700 ring-green-600/20"
+              : "bg-red-200 text-red-700 ring-red-600/20"
           }`}
         >
           <span
@@ -47,63 +44,64 @@ export const View = ({ data, isLoading }) => {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Category Name:
-          </span>
-          <span className="text-sm text-gray-600 ml-2">
-            {data.categoryName}
+          <div className="text-sm font-bold text-gray-700 uppercase">Title</div>
+          <span className="text-sm text-gray-600">{data.title}</span>
+        </div>
+        <div className="col-span-1">
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Author
+          </div>
+          <span className="text-sm text-gray-600">
+            {author ? `${author.firstName} ${author.lastName}` : "N/A"}
           </span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Popularity:
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Category
+          </div>
+          <span className="text-sm text-gray-600">
+            {category ? category.categoryName : "N/A"}
           </span>
-          <span className="text-sm text-gray-600 ml-2">{data.popularity}</span>
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Related Genres:
-          </span>
-          <span className="text-sm text-gray-600 ml-2">
-            <div className="flex flex-wrap">
-              {data.relatedGenres.map((genre, index) => (
-                <span
-                  key={index}
-                  className="bg-purple-400 py-1 px-1 rounded-md mt-1 mb-1 mr-1"
-                >
-                  {ageGroupOptions[genre] || "N/A"}
-                </span>
-              ))}
-            </div>
-          </span>
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Publication
+          </div>
+          <span className="text-sm text-gray-600">{data.publication}</span>
         </div>
         <div className="col-span-1">
-          <span className="text-sm font-bold text-gray-700 uppercase">
-            Age Group:
-          </span>
-          <span className="text-sm text-gray-600 ml-2">
-            {" "}
-            <div className="flex flex-wrap">
-              {data.ageGroup.map((ageGroup, index) => (
-                <span
-                  key={index}
-                  className="bg-purple-400 py-1 px-1 rounded-md mt-1 mb-1 mr-1"
-                >
-                  {ageGroupOptions[ageGroup] || "N/A"}
-                </span>
-              ))}
-            </div>
+          <div className="text-sm font-bold text-gray-700 uppercase">ISBN</div>
+          <span className="text-sm text-gray-600">{data.isbn}</span>
+        </div>
+        <div className="col-span-1">
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Edition
+          </div>
+          <span className="text-sm text-gray-600">{data.edition}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+        <div className="col-span-1">
+          <div className="text-sm font-bold text-gray-700 uppercase">
+            Language
+          </div>
+          <span className="text-sm text-gray-600">
+            {languages.find((lang) => lang.value === data.language)?.label ||
+              "N/A"}
           </span>
         </div>
       </div>
       <div className="mt-4">
-        <span className="text-sm font-bold text-gray-700 uppercase">
-          Description:
-        </span>
-        <span className="text-sm text-gray-600 ml-2">
+        <div className="text-sm font-bold text-gray-700 uppercase">
+          Description
+        </div>
+        <span className="text-sm text-gray-600">
           {data.description || "N/A"}
         </span>
       </div>

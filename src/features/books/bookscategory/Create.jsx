@@ -17,10 +17,10 @@ import FormMultiSelect from "../../../app/components/form/FormSelect";
 import FormTextArea from "../../../app/components/form/FormTextArea";
 
 const CreateSchema = z.object({
-  categoryName: z.string().trim().min(1, "Category name is required"),
+  categoryName: z.string().trim().min(1, "Category name is required").max(40),
   ageGroup: z.array(z.number()).min(1, "Age group is required"),
   relatedGenres: z.array(z.number()).min(1, "Related genres is required"),
-  description: z.string().trim(),
+  description: z.string().trim().max(300),
   popularity: z.coerce
     .number()
     .min(1, "Popularity is required")
@@ -40,6 +40,7 @@ export const Create = ({ modalId }) => {
     resolver: zodResolver(CreateSchema),
   });
 
+  const { data: categoryData } = useGetBookCategoryQuery();
   const postQuery = usePostBookCategoryMutation;
   const { onSubmit, isLoading, isSuccess, isError, error } =
     usePostHook(postQuery);
@@ -71,6 +72,7 @@ export const Create = ({ modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength={40}
         />
 
         <FormMultiSelect
@@ -90,12 +92,15 @@ export const Create = ({ modalId }) => {
           type="number"
           name="popularity"
           placeholder="0"
+          min="0"
+          max="100"
           required={true}
-          min={0}
-          max={100}
           register={register}
           errors={errors}
           className="col-span-1"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 3);
+          }}
         />
       </div>
 
@@ -120,6 +125,7 @@ export const Create = ({ modalId }) => {
           placeholder="Description"
           register={register}
           errors={errors}
+          maxLength={300}
         />
       </div>
 
@@ -129,7 +135,6 @@ export const Create = ({ modalId }) => {
         className="mt-4"
         register={register}
       />
-
       <FormButton
         disabled={isLoading || isSubmitting}
         isLoading={isLoading}

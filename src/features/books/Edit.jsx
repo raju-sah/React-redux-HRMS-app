@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
@@ -17,21 +17,23 @@ import EditSkeleton from "../../app/components/skeletons/EditSkeleton";
 import { useUpdateBookMutation } from "./booksApiSlice";
 
 const EditSchema = z.object({
-  title: z.string().trim().min(1, "title is required"),
+  title: z.string().trim().min(1, "title is required").max(100),
   author: z.string().trim().min(1, "Author is required"),
   category: z.string().trim().min(1, "Category is required"),
-  publication: z.string().trim().min(1, "Publication is required"),
-  isbn: z.coerce.number()
-  .int("ISBN must be an integer")
-  .refine(val => val.toString().length === 13, {
-    message: "ISBN must be exactly 13 digits long.",
-  }),  language: z.coerce.number().min(1, "Language is required"),
-  description: z.string().trim(),
+  publication: z.string().trim().min(1, "Publication is required").max(100),
+  isbn: z.coerce
+    .number()
+    .int("ISBN must be an integer")
+    .refine((val) => val.toString().length === 13, {
+      message: "ISBN must be exactly 13 digits long.",
+    }),
+  edition: z.string().trim().min(1, "Edition is required").max(20),
+  language: z.coerce.number().min(1, "Language is required"),
+  description: z.string().trim().max(300),
   status: z.boolean().default(false),
 });
 
 export const Edit = ({ data, isLoading, modalId }) => {
-  console.log(data);  
   const dispatch = useDispatch();
   const {
     register,
@@ -55,7 +57,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     },
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (data) {
       setValue("title", data.title || "");
       setValue("author", data.author || "");
@@ -80,7 +82,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
       datas.language = Number(datas.language);
       datas.status = datas.status ? 1 : 0;
 
-      onSubmit( {id: data._uuid, ...datas }).then(() => {
+      onSubmit({ id: data._uuid, ...datas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
@@ -104,6 +106,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength="100"
         />
         <FormSelect
           label="Author"
@@ -144,6 +147,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength="100"
         />
         <FormInput
           label="ISBN"
@@ -156,6 +160,9 @@ export const Edit = ({ data, isLoading, modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 13); // 13 digits only
+          }}
         />
         <FormInput
           label="Edition"
@@ -165,6 +172,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           className="col-span-2"
           register={register}
           errors={errors}
+          maxLength="20"
         />
       </div>
 
@@ -184,6 +192,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           placeholder="Description"
           register={register}
           errors={errors}
+          maxLength="300"
         />
       </div>
       <CheckBox
