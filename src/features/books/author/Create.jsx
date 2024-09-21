@@ -13,8 +13,9 @@ import FormTextArea from "../../../app/components/form/FormTextArea";
 import { countries } from "../../../enums/Country";
 import { authorSchema } from "../../../validation/authorSchema";
 
-const schema = authorSchema();
 export const Create = ({ modalId }) => {
+  const schema = authorSchema();
+
   const dispatch = useDispatch();
   const {
     register,

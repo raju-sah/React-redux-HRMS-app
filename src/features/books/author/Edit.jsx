@@ -14,8 +14,9 @@ import FormSelect from "../../../app/components/form/FormSelect";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
 import { authorSchema } from "../../../validation/authorSchema";
 
-const schema = authorSchema();
 export const Edit = ({ data, isLoading, modalId }) => {
+  const schema = authorSchema();
+
   const dispatch = useDispatch();
 
   const {

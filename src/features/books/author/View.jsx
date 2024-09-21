@@ -12,17 +12,17 @@ export const View = ({ data, isLoading }) => {
       <div className="flex items-center mb-4 border-b-2 p-2 border-[#d8dbdd]">
         <span
           className={`ml-auto inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-            data.status === 1
+            data.status === true
               ? "bg-green-50 text-green-700 ring-green-600/20"
               : "bg-red-50 text-red-700 ring-red-600/20"
           }`}
         >
           <span
             className={`inline-block w-2 h-2 mr-1 ${
-              data.status === 1 ? "bg-green-500" : "bg-red-500"
+              data.status === true ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
           ></span>
-          {data.status === 1 ? "Active" : "Inactive"}
+          {data.status === true ? "Active" : "Inactive"}
         </span>
 
         <span className="ml-3 font-bold text-gray-700">Created At:</span>

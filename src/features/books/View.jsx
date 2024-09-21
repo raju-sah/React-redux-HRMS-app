@@ -1,16 +1,13 @@
 import "react-loading-skeleton/dist/skeleton.css";
 import { languages } from "./Language";
 import ViewSkeleton from "../../app/components/skeletons/ViewSkeleton";
-import { useGetBookCategoryByIdQuery } from "./bookscategory/booksCategoryApiSlice";
-import { useGetAuthorByIdQuery } from "./author/authorApiSlice";
+import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
+import { useGetAuthorQuery } from "./author/authorApiSlice";
 
 export const View = ({ data, isLoading }) => {
-  const { data: author, isLoading: isLoadingAuthor } = useGetAuthorByIdQuery(
-    data?.author,
-    { skip: !data?.author }
-  );
-  const { data: category, isLoading: isLoadingCategory } =
-    useGetBookCategoryByIdQuery(data?.category, { skip: !data?.category });
+  const { data: authorData, isLoading: isLoadingAuthor } = useGetAuthorQuery();
+  const { data: categoryData, isLoading: isLoadingCategory } =
+    useGetBookCategoryQuery();
 
   if (isLoading || !data || isLoadingAuthor || isLoadingCategory)
     return <ViewSkeleton />;
@@ -20,17 +17,17 @@ export const View = ({ data, isLoading }) => {
       <div className="flex items-center mb-4 border-b-2 p-2 border-[#d8dbdd]">
         <span
           className={`ml-auto inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-            data.status === 1
+            data.status === true
               ? "bg-green-200 text-green-700 ring-green-600/20"
               : "bg-red-200 text-red-700 ring-red-600/20"
           }`}
         >
           <span
             className={`inline-block w-2 h-2 mr-1 ${
-              data.status === 1 ? "bg-green-500" : "bg-red-500"
+              data.status === true ? "bg-green-500" : "bg-red-500"
             } rounded-full`}
           ></span>
-          {data.status === 1 ? "Active" : "Inactive"}
+          {data.status === true ? "Active" : "Inactive"}
         </span>
 
         <span className="ml-3 font-bold text-gray-700">Created At:</span>
@@ -47,23 +44,43 @@ export const View = ({ data, isLoading }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="col-span-1">
           <div className="text-sm font-bold text-gray-700 uppercase">Title</div>
-          <span className="text-sm text-gray-600">{data.title}</span>
+          <span className="text-sm text-gray-600">{data.name}</span>
         </div>
+
         <div className="col-span-1">
           <div className="text-sm font-bold text-gray-700 uppercase">
-            Author
+            Authors
           </div>
-          <span className="text-sm text-gray-600">
-            {author ? `${author.firstName} ${author.lastName}` : "N/A"}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            {authorData?.items
+              .filter((auth) => data.author.includes(auth?._uuid))
+              .map((auth) => (
+                <span
+                  key={auth?._uuid}
+                  className="bg-purple-400 rounded-md px-2 py-1 text-xs font-medium"
+                >
+                  {`${auth?.firstName} ${auth?.lastName}`}
+                </span>
+              ))}
+          </div>
         </div>
+
         <div className="col-span-1">
           <div className="text-sm font-bold text-gray-700 uppercase">
             Category
           </div>
-          <span className="text-sm text-gray-600">
-            {category ? category.categoryName : "N/A"}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            {categoryData?.items
+              .filter((cat) => data.category.includes(cat?._uuid))
+              .map((cat) => (
+                <span
+                  key={cat?._uuid}
+                  className="bg-purple-400 rounded-md px-2 py-1 text-xs font-medium"
+                >
+                  {cat?.categoryName}
+                </span>
+              ))}
+          </div>
         </div>
       </div>
 

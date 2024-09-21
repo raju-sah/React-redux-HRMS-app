@@ -4,35 +4,21 @@ import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../modal/modalSlice";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormTextArea from "../../app/components/form/FormTextArea";
 import FormInput from "../../app/components/form/FormInput";
 import FormSelect from "../../app/components/form/FormSelect";
-import { usePostBookMutation } from "./booksApiSlice";
+import { useGetBooksQuery, usePostBookMutation } from "./booksApiSlice";
 import usePostHook from "../../hooks/usePostHook";
 import { useGetAuthorQuery } from "./author/authorApiSlice";
 import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
 import { languages } from "./Language";
-
-const CreateSchema = z.object({
-  title: z.string().trim().min(1, "title is required").max(100),
-  author: z.array(z.string()).min(1, "Author is required"),
-  category: z.array(z.string()).min(1, "Category is required"),
-  publication: z.string().trim().min(1, "Publication is required").max(100),
-  isbn: z.coerce
-    .number()
-    .int("ISBN must be an number")
-    .refine((val) => val.toString().length === 13, {
-      message: "ISBN must be exactly 13 digits long.",
-    }),
-  edition: z.string().trim().min(1, "Edition is required").max(20),
-  language: z.coerce.number().min(1, "Language is required"),
-  description: z.string().trim().max(300),
-  status: z.boolean().default(false),
-});
+import { BooksSchema } from "../../validation/booksSchema";
 
 export const Create = ({ modalId }) => {
+  const { data: bookData } = useGetBooksQuery();
+  const schema = BooksSchema(bookData);
+
   const dispatch = useDispatch();
   const {
     register,
@@ -41,7 +27,7 @@ export const Create = ({ modalId }) => {
     control,
     reset,
   } = useForm({
-    resolver: zodResolver(CreateSchema),
+    resolver: zodResolver(schema),
   });
 
   const { data: authorData, isLoading: isAuthorLoading } = useGetAuthorQuery();
@@ -70,9 +56,9 @@ export const Create = ({ modalId }) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
-          label="Title"
-          name="title"
-          placeholder="Title"
+          label="Name"
+          name="name"
+          placeholder="Name"
           required={true}
           className="col-span-2"
           register={register}
@@ -89,7 +75,7 @@ export const Create = ({ modalId }) => {
           options={
             !isAuthorLoading && authorData?.items
               ? authorData.items
-                  .filter((item) => item.status === 1)
+                  .filter((item) => item.status === true)
                   .map((item) => ({
                     value: item._uuid,
                     label: `${item.firstName} ${item.lastName}`,
@@ -107,7 +93,7 @@ export const Create = ({ modalId }) => {
           options={
             !isBooksCategoryLoading && booksCategoryData?.items
               ? booksCategoryData.items
-                  .filter((item) => item.status === 1)
+                  .filter((item) => item.status === true)
                   .map((item) => ({
                     value: item._uuid,
                     label: item.categoryName,

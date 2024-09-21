@@ -59,7 +59,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const handleFormSubmit = useCallback(
     (datas) => {
       datas.popularity = Number(datas.popularity);
-  
+
       onSubmit({ id: data._uuid, ...datas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
@@ -67,7 +67,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
     },
     [onSubmit, reset, modalId, dispatch]
   );
-  
+
   return isLoading ? (
     <EditSkeleton />
   ) : (
@@ -91,10 +91,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          options={ageGroupOptions.map((group, index) => ({
-            value: index,
-            label: group,
-          }))}
+          options={ageGroupOptions}
         />
 
         <FormInput

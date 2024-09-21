@@ -4,7 +4,6 @@ import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
 import { useDispatch } from "react-redux";
 import { closeModal } from "../modal/modalSlice";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormTextArea from "../../app/components/form/FormTextArea";
 import FormInput from "../../app/components/form/FormInput";
@@ -14,26 +13,13 @@ import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
 import { languages } from "./Language";
 import useUpdateHook from "../../hooks/useUpdateHook";
 import EditSkeleton from "../../app/components/skeletons/EditSkeleton";
-import { useUpdateBookMutation } from "./booksApiSlice";
-
-const EditSchema = z.object({
-  title: z.string().trim().min(1, "title is required").max(100),
-  author: z.string().trim().min(1, "Author is required"),
-  category: z.string().trim().min(1, "Category is required"),
-  publication: z.string().trim().min(1, "Publication is required").max(100),
-  isbn: z.coerce
-    .number()
-    .int("ISBN must be an integer")
-    .refine((val) => val.toString().length === 13, {
-      message: "ISBN must be exactly 13 digits long.",
-    }),
-  edition: z.string().trim().min(1, "Edition is required").max(20),
-  language: z.coerce.number().min(1, "Language is required"),
-  description: z.string().trim().max(300),
-  status: z.boolean().default(false),
-});
+import { useGetBooksQuery, useUpdateBookMutation } from "./booksApiSlice";
+import { BooksSchema } from "../../validation/booksSchema";
 
 export const Edit = ({ data, isLoading, modalId }) => {
+  const { data: bookData } = useGetBooksQuery();
+  const schema = BooksSchema(bookData, data?.name);
+
   const dispatch = useDispatch();
   const {
     register,
@@ -43,11 +29,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
     setValue,
     reset,
   } = useForm({
-    resolver: zodResolver(EditSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
-      title: data?.title || "",
-      author: data?.author || "",
-      category: data?.category || "",
+      name: data?.name || "",
+      author: data?.author || [],
+      category: data?.category || [],
       publication: data?.publication || "",
       isbn: data?.isbn || "",
       edition: data?.edition || "",
@@ -59,9 +45,9 @@ export const Edit = ({ data, isLoading, modalId }) => {
 
   useEffect(() => {
     if (data) {
-      setValue("title", data.title || "");
-      setValue("author", data.author || "");
-      setValue("category", data.category || "");
+      setValue("name", data.name || "");
+      setValue("author", data.author || []);
+      setValue("category", data.category || []);
       setValue("publication", data.publication || "");
       setValue("isbn", data.isbn || "");
       setValue("edition", data.edition || "");
@@ -98,9 +84,9 @@ export const Edit = ({ data, isLoading, modalId }) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
-          label="Title"
-          name="title"
-          placeholder="Title"
+          label="Name"
+          name="name"
+          placeholder="Name"
           required={true}
           className="col-span-2"
           register={register}
@@ -113,12 +99,15 @@ export const Edit = ({ data, isLoading, modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
+          isMulti={true}
           options={
             !isAuthorLoading && authorData?.items
-              ? authorData.items.map((item) => ({
-                  value: item._uuid,
-                  label: `${item.firstName} ${item.lastName}`,
-                }))
+              ? authorData.items
+                  .filter((item) => item.status === true)
+                  .map((item) => ({
+                    value: item._uuid,
+                    label: `${item.firstName} ${item.lastName}`,
+                  }))
               : []
           }
         />
@@ -128,13 +117,15 @@ export const Edit = ({ data, isLoading, modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          isMulti={false}
+          isMulti={true}
           options={
             !isBooksCategoryLoading && booksCategoryData?.items
-              ? booksCategoryData.items.map((item) => ({
-                  value: item._uuid,
-                  label: item.categoryName,
-                }))
+              ? booksCategoryData.items
+                  .filter((item) => item.status === true)
+                  .map((item) => ({
+                    value: item._uuid,
+                    label: item.categoryName,
+                  }))
               : []
           }
         />
@@ -155,7 +146,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
           placeholder="0"
           required={true}
           min={0}
-          max={100}
           register={register}
           errors={errors}
           className="col-span-2"

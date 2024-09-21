@@ -71,7 +71,7 @@ const Index = () => {
     },
   ];
 
-  const filterColumns = ["firstName", "popularity", "relatedGenres"];
+  const filterColumns = ["firstName", "popularity"];
 
   return isLoading ? (
     <DataTableSkeleton />

@@ -48,23 +48,21 @@ const Index = () => {
     },
     {
       name: "Age Group",
-      selector: (row) =>
-        Array.isArray(row.ageGroup) && row.ageGroup.length > 0 ? (
-          <div className="flex flex-wrap">
-            {row.ageGroup.map((ageGroup, index) => (
-              <span
-                key={index}
-                className="bg-purple-400 py-1 px-1 rounded-md mt-1 mb-1 mr-1"
-              >
-                {ageGroupOptions[ageGroup] || ""}
-              </span>
-            ))}
-          </div>
-        ) : (
-          ""
-        ),
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-2">
+        {row.ageGroup?.map((groupIndex) => (
+          <span
+            key={groupIndex}
+            className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+          >
+            {ageGroupOptions[groupIndex]?.label}
+          </span>
+        ))}
+      </div>
+      ),
       width: "auto",
-    },
+    }
+    
   ];
 
   const filterColumns = [

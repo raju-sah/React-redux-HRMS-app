@@ -23,6 +23,7 @@ const Index = () => {
 
   const { data: authorData } = useGetAuthorQuery();
   const { data: booksCategoryData } = useGetBookCategoryQuery();
+  
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [statusChange] = useBookStatusChangeMutation();
@@ -43,29 +44,45 @@ const Index = () => {
     },
     {
       name: "Title",
-      selector: (row) => row.title || "N/A",
+      selector: (row) => row.name || "N/A",
       sortable: true,
       width: "200px",
     },
     {
       name: "Author",
-      selector: (row) =>
-        authorData?.items.map((author) =>
-          author?._uuid === row.author
-            ? author?.firstName + " " + author?.lastName
-            : null
-        ) || "N/A",
-      sortable: true,
-      width: "200px",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {authorData?.items
+            .filter(auth => row.author.includes(auth?._uuid))
+            .map((auth) => (
+              <span
+                key={auth?._uuid}
+                className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+              >
+                {`${auth?.firstName} ${auth?.lastName}`}
+              </span>
+            ))}
+        </div>
+      ),
+      width: "150px",
     },
     {
       name: "Category",
-      selector: (row) =>
-        booksCategoryData?.items.map((category) =>
-          category?._uuid === row.category ? category?.categoryName : null
-        ) || "N/A",
-      sortable: true,
-      width: "130px",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {booksCategoryData?.items
+            .filter(cat => row.category.includes(cat?._uuid))
+            .map((cat) => (
+              <span
+                key={cat?._uuid}
+                className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+              >
+                {cat?.categoryName}
+              </span>
+            ))}
+        </div>
+      ),
+      width: "200px",
     },
     {
       name: "ISBN",
@@ -79,14 +96,8 @@ const Index = () => {
       sortable: true,
       width: "120px",
     },
-    {
-      name: "Edition",
-      selector: (row) => row.edition || "N/A",
-      sortable: true,
-      width: "130px",
-    },
   ];
-
+  
   const filterColumns = [
     "title",
     "author",

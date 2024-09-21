@@ -64,7 +64,6 @@ export const Create = ({ modalId }) => {
           errors={errors}
           maxLength={40}
         />
-       
         <FormMultiSelect
           label="Age Group"
           name="ageGroup"
@@ -72,12 +71,9 @@ export const Create = ({ modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          options={ageGroupOptions.map((group, index) => ({
-            value: index,
-            label: group,
-          }))}
+          options={ageGroupOptions}
         />
-       <FormInput
+        <FormInput
           label="Popularity"
           type="number"
           name="popularity"
@@ -95,7 +91,6 @@ export const Create = ({ modalId }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-     
         <FormTextArea
           label="Description"
           name="description"
