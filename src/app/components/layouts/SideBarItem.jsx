@@ -12,14 +12,24 @@ const SideBarItem = () => {
         { label: 'Books List', path: '/books', icon: <FiList size={15} /> },
         { label: 'Categories', path: '/book-categories', icon: <BiCategory size={15} /> },
         { label: 'Authors', path: '/authors', icon: <FiList size={15} /> },
-        {
-          label: 'User Groups',
-          icon: <FiUserPlus size={15} />,
-          children: [
-            { label: 'Create Group', path: '/create-group', icon: <FiUserPlus size={15} /> },
-            { label: 'Group Permissions', path: '/users/groups/permissions', icon: <FiUserX size={15} /> }
-          ]
-        }
+        // {
+        //   label: 'User Groups',
+        //   icon: <FiUserPlus size={15} />,
+        //   children: [
+        //     { label: 'Create Group', path: '/create-group', icon: <FiUserPlus size={15} /> },
+        //     { label: 'Group Permissions', path: '/users/groups/permissions', icon: <FiUserX size={15} /> }
+        //   ]
+        // }
+      ]
+    },
+    {
+      label: 'Movies',
+      icon: <FiBookOpen size={15} />,
+      children: [
+        { label: 'Movies List', path: '/', icon: <FiList size={15} /> },
+        { label: 'Web Series', path: '/', icon: <BiCategory size={15} /> },
+        { label: 'Anime', path: '/', icon: <FiList size={15} /> },
+        { label: 'Genres', path: '/', icon: <FiList size={15} /> },
       ]
     },
     { label: 'Settings', icon: <FiSettings size={15} />, path: '/settings' },

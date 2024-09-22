@@ -56,6 +56,17 @@ export const Create = ({ modalId }) => {
     >
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
+          label="Image URL"
+          name="image_url"
+          type="url"
+          placeholder="Image URL"
+          required={true}
+          className="col-span-2"
+          register={register}
+          errors={errors}
+          maxLength="100"
+        />
+        <FormInput
           label="Name"
           name="name"
           placeholder="Name"
@@ -83,12 +94,14 @@ export const Create = ({ modalId }) => {
               : []
           }
         />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-9 gap-4">
         <FormSelect
           label="Category"
           name="category"
           control={control}
           required={true}
-          className="col-span-2"
+          className="col-span-3"
           isMulti={true}
           options={
             !isBooksCategoryLoading && booksCategoryData?.items
@@ -101,21 +114,33 @@ export const Create = ({ modalId }) => {
               : []
           }
         />
-        <FormInput
-          label="Publication"
-          name="publication"
-          placeholder="Publication"
+        <FormSelect
+          label="Language"
+          name="language"
+          control={control}
           required={true}
           className="col-span-2"
+          options={languages}
+        />
+        <FormInput
+          label="Price"
+          type="number"
+          name="price"
+          placeholder="10 digit number only"
+          required={true}
+          min={0}
           register={register}
           errors={errors}
-          maxLength="100"
+          className="col-span-2"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 10); // 10 digits only
+          }}
         />
         <FormInput
           label="ISBN"
           type="number"
           name="isbn"
-          placeholder="0"
+          placeholder="13 digit number only"
           required={true}
           min={0}
           register={register}
@@ -124,6 +149,19 @@ export const Create = ({ modalId }) => {
           onInput={(e) => {
             e.target.value = e.target.value.slice(0, 13); // 13 digits only
           }}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+        <FormInput
+          label="Publication"
+          name="publication"
+          placeholder="Publication"
+          required={true}
+          className="col-span-3"
+          register={register}
+          errors={errors}
+          maxLength="100"
         />
         <FormInput
           label="Edition"
@@ -134,17 +172,6 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           maxLength="20"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <FormSelect
-          label="Language"
-          name="language"
-          control={control}
-          required={true}
-          className="col-span-2"
-          options={languages}
         />
         <FormTextArea
           label="Description"

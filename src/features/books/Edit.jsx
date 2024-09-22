@@ -31,9 +31,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
+      image_url: data?.image_url || "",
       name: data?.name || "",
       author: data?.author || [],
       category: data?.category || [],
+      price: data?.price || "",
       publication: data?.publication || "",
       isbn: data?.isbn || "",
       edition: data?.edition || "",
@@ -45,9 +47,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
 
   useEffect(() => {
     if (data) {
+      setValue("image_url", data.image_url || "");
       setValue("name", data.name || "");
       setValue("author", data.author || []);
       setValue("category", data.category || []);
+      setValue("price", data.price || "");
       setValue("publication", data.publication || "");
       setValue("isbn", data.isbn || "");
       setValue("edition", data.edition || "");
@@ -82,7 +86,18 @@ export const Edit = ({ data, isLoading, modalId }) => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <FormInput
+          label="Image URL"
+          name="image_url"
+          type="url"
+          placeholder="Image URL"
+          required={true}
+          className="col-span-2"
+          register={register}
+          errors={errors}
+          maxLength="100"
+        />
         <FormInput
           label="Name"
           name="name"
@@ -98,8 +113,8 @@ export const Edit = ({ data, isLoading, modalId }) => {
           name="author"
           control={control}
           required={true}
-          className="col-span-2"
           isMulti={true}
+          className="col-span-2"
           options={
             !isAuthorLoading && authorData?.items
               ? authorData.items
@@ -111,12 +126,14 @@ export const Edit = ({ data, isLoading, modalId }) => {
               : []
           }
         />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-9 gap-4">
         <FormSelect
           label="Category"
           name="category"
           control={control}
           required={true}
-          className="col-span-2"
+          className="col-span-3"
           isMulti={true}
           options={
             !isBooksCategoryLoading && booksCategoryData?.items
@@ -129,21 +146,33 @@ export const Edit = ({ data, isLoading, modalId }) => {
               : []
           }
         />
-        <FormInput
-          label="Publication"
-          name="publication"
-          placeholder="Publication"
+        <FormSelect
+          label="Language"
+          name="language"
+          control={control}
           required={true}
           className="col-span-2"
+          options={languages}
+        />
+        <FormInput
+          label="Price"
+          type="number"
+          name="price"
+          placeholder="10 digit number only"
+          required={true}
+          min={0}
           register={register}
           errors={errors}
-          maxLength="100"
+          className="col-span-2"
+          onInput={(e) => {
+            e.target.value = e.target.value.slice(0, 10); // 10 digits only
+          }}
         />
         <FormInput
           label="ISBN"
           type="number"
           name="isbn"
-          placeholder="0"
+          placeholder="13 digit number only"
           required={true}
           min={0}
           register={register}
@@ -152,6 +181,19 @@ export const Edit = ({ data, isLoading, modalId }) => {
           onInput={(e) => {
             e.target.value = e.target.value.slice(0, 13); // 13 digits only
           }}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+        <FormInput
+          label="Publication"
+          name="publication"
+          placeholder="Publication"
+          required={true}
+          className="col-span-3"
+          register={register}
+          errors={errors}
+          maxLength="100"
         />
         <FormInput
           label="Edition"
@@ -162,17 +204,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
           register={register}
           errors={errors}
           maxLength="20"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <FormSelect
-          label="Language"
-          name="language"
-          control={control}
-          required={true}
-          className="col-span-2"
-          options={languages}
         />
         <FormTextArea
           label="Description"
