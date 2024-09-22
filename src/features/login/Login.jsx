@@ -19,18 +19,18 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }, // is submitting is only works when  you add the promise in the onSubmit function
+    formState: { errors, isSubmitting }, // isSubmitting only works when you add the promise in the onSubmit function
   } = useForm({
     resolver: zodResolver(LoginSchema),
   });
 
   const onSubmit = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500)); // you have add this to work isSubmitting
 
     if (data.username === "raju" && data.password === "raju") {
       localStorage.setItem("loginTime", new Date().getTime());
       toast.success("Login successful!");
-      navigate("/dashboard");
+      navigate("/");
     } else {
       toast.error("Invalid username or password");
     }

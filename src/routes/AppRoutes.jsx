@@ -49,7 +49,6 @@ const AppRoutes = () => {
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate to="/login" replace />} />
 
             <Route
               element={
@@ -58,7 +57,7 @@ const AppRoutes = () => {
                 </AuthenticatedRoute>
               }
             >
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/books" element={<BookIndex />} />
               <Route path="/book-categories" element={<CategoryIndex />} />
               <Route path="/authors" element={<AuthorIndex />} />
@@ -70,7 +69,7 @@ const AppRoutes = () => {
             </Route>
 
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
       </DelayedContent>

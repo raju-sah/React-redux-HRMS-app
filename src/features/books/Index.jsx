@@ -21,9 +21,10 @@ const Index = () => {
   const { data: booksData, isLoading } = useGetBooksQuery();
   const books = booksData?.items || [];
 
-  const { data: authorData } = useGetAuthorQuery();
-  const { data: booksCategoryData } = useGetBookCategoryQuery();
-  
+  const { data: authorData, isLoading: isLoadingAuthor } = useGetAuthorQuery();
+  const { data: booksCategoryData, isLoading: isLoadingBooksCategory } =
+    useGetBookCategoryQuery();
+
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [statusChange] = useBookStatusChangeMutation();
@@ -53,7 +54,7 @@ const Index = () => {
       selector: (row) => (
         <div className="flex flex-wrap gap-1 py-1">
           {authorData?.items
-            .filter(auth => row.author.includes(auth?._uuid))
+            .filter((auth) => row.author.includes(auth?._uuid))
             .map((auth) => (
               <span
                 key={auth?._uuid}
@@ -71,7 +72,7 @@ const Index = () => {
       selector: (row) => (
         <div className="flex flex-wrap gap-1 py-1">
           {booksCategoryData?.items
-            .filter(cat => row.category.includes(cat?._uuid))
+            .filter((cat) => row.category.includes(cat?._uuid))
             .map((cat) => (
               <span
                 key={cat?._uuid}
@@ -92,23 +93,23 @@ const Index = () => {
     },
     {
       name: "Language",
-      selector: (row) => languages.find((lang) => lang.value === row.language)?.label || "N/A",
+      selector: (row) =>
+        languages.find((lang) => lang.value === row.language)?.label || "N/A",
       sortable: true,
       width: "120px",
     },
   ];
-  
+
   const filterColumns = [
-    "title",
-    "author",
-    "category",
+    "name",
     "publication",
     "isbn",
     "language",
     "edition",
+    "price",
   ];
 
-  return isLoading ? (
+  return isLoading || isLoadingAuthor || isLoadingBooksCategory ? (
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
@@ -138,7 +139,7 @@ const Index = () => {
               setSelectedUserId(row._uuid);
             },
             content: () => <View data={dataById} isLoading={isFetching} />,
-          },          
+          },
           {
             modalId: "editBookModalId",
             title: "Book Edit",

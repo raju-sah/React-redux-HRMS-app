@@ -118,7 +118,7 @@ export const View = ({ data, isLoading }) => {
             <div className="text-sm font-bold text-gray-700 uppercase">
               Price
             </div>
-            <span className="text-sm text-gray-600">{data.price || "N/A"}</span>
+            <span className="text-sm text-gray-600">Rs.{data.price || "N/A"}</span>
           </div>
 
           <div className="mt-5">

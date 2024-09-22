@@ -4,7 +4,7 @@ import { BiCategory } from 'react-icons/bi';
 
 const SideBarItem = () => {
   const menuItems = [
-    { label: 'Dashboard', icon: <FiHome size={15} />, path: '/dashboard' },
+    { label: 'Dashboard', icon: <FiHome size={15} />, path: '/' },
     {
       label: 'Books',
       icon: <FiBookOpen size={15} />,
@@ -26,10 +26,10 @@ const SideBarItem = () => {
       label: 'Movies',
       icon: <FiBookOpen size={15} />,
       children: [
-        { label: 'Movies List', path: '/', icon: <FiList size={15} /> },
-        { label: 'Web Series', path: '/', icon: <BiCategory size={15} /> },
-        { label: 'Anime', path: '/', icon: <FiList size={15} /> },
-        { label: 'Genres', path: '/', icon: <FiList size={15} /> },
+        { label: 'Movies List', path: '/movies', icon: <FiList size={15} /> },
+        { label: 'Web Series', path: '/web-series', icon: <BiCategory size={15} /> },
+        { label: 'Anime', path: '/animes', icon: <FiList size={15} /> },
+        { label: 'Genres', path: '/genres', icon: <FiList size={15} /> },
       ]
     },
     { label: 'Settings', icon: <FiSettings size={15} />, path: '/settings' },
