@@ -23,10 +23,10 @@ const SideBarItem = () => {
       ]
     },
     {
-      label: 'Movies',
+      label: 'Movies & Series',
       icon: <FiBookOpen size={15} />,
       children: [
-        { label: 'Movies List', path: '/movies', icon: <FiList size={15} /> },
+        { label: 'Movies', path: '/movies', icon: <FiList size={15} /> },
         { label: 'Web Series', path: '/web-series', icon: <BiCategory size={15} /> },
         { label: 'Anime', path: '/animes', icon: <FiList size={15} /> },
         { label: 'Genres', path: '/genres', icon: <FiList size={15} /> },

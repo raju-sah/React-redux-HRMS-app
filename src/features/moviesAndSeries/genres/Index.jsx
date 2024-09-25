@@ -1,32 +1,33 @@
-import { useState } from "react";
-import { FaEye, FaEdit } from "react-icons/fa";
+import { FaEdit, FaEye } from "react-icons/fa";
+import CustomDataTable from "../../../app/components/CustomDatatable";
 import Modal from "../../../app/components/form/Modal";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
-import CustomDataTable from "../../../app/components/CustomDatatable";
-import { Create } from "./Create";
-import { Edit } from "./Edit";
-import { View } from "./View";
-import { ageGroupOptions } from "./AgeGroup";
+import { useState } from "react";
 import {
-  useBookCategoryStatusChangeMutation,
-  useDeleteBookCategoryByIdMutation,
-  useGetBookCategoryByIdQuery,
-  useGetBookCategoryQuery,
-} from "./booksCategoryApiSlice";
-import PopularityBadge from "../../../app/components/PopularityBadge";
+  useDeleteGenreByIdMutation,
+  useGenreStatusChangeMutation,
+  useGetGenreByIdQuery,
+  useGetGenresQuery,
+} from "./GenreApiSlice";
+import { Create } from "./Create";
+import { View } from "./View";
+import { Edit } from "./Edit";
+import { ageGroupOptions } from "../../books/bookscategory/AgeGroup";
 
-const Index = () => {
-  const { data: booksCategoryData, isLoading } = useGetBookCategoryQuery();
+export const Index = () => {
+  const { data: booksCategoryData, isLoading } = useGetGenresQuery();
   const booksCategory = booksCategoryData?.items || [];
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const [statusChange] = useBookCategoryStatusChangeMutation();
-  const [deleteQuery] = useDeleteBookCategoryByIdMutation();
+  const [statusChange] = useGenreStatusChangeMutation();
+  const [deleteQuery] = useDeleteGenreByIdMutation();
 
-  const { data: userById, isLoading: isUserLoading } =
-    useGetBookCategoryByIdQuery(selectedUserId, {
+  const { data: userById, isLoading: isUserLoading } = useGetGenreByIdQuery(
+    selectedUserId,
+    {
       skip: !selectedUserId,
-    });
+    }
+  );
 
   const columns = [
     {
@@ -35,14 +36,8 @@ const Index = () => {
       width: "60px",
     },
     {
-      name: "Category Name",
-      selector: (row) => row.categoryName || "",
-      sortable: true,
-      width: "auto",
-    },
-    {
-      name: "Popularity",
-      selector: (row) => <PopularityBadge popularity={row.popularity} /> || "",
+      name: "Name",
+      selector: (row) => row.name || "",
       sortable: true,
       width: "auto",
     },
@@ -50,25 +45,21 @@ const Index = () => {
       name: "Age Group",
       selector: (row) => (
         <div className="flex flex-wrap gap-1 py-2">
-        {row.ageGroup?.map((groupIndex) => (
-          <span
-            key={groupIndex}
-            className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
-          >
-            {ageGroupOptions[groupIndex]?.label}
-          </span>
-        ))}
-      </div>
+          {row.ageGroup?.map((groupIndex) => (
+            <span
+              key={groupIndex}
+              className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+            >
+              {ageGroupOptions[groupIndex]?.label}
+            </span>
+          ))}
+        </div>
       ),
       width: "auto",
-    }
-    
+    },
   ];
 
-  const filterColumns = [
-    "categoryName",
-    "popularity",
-  ];
+  const filterColumns = ["name", "ageGroup"];
 
   return isLoading ? (
     <DataTableSkeleton />
@@ -112,5 +103,3 @@ const Index = () => {
     </div>
   );
 };
-
-export default Index;

@@ -12,7 +12,7 @@ const DataTableSkeleton = () => {
       <table className='w-full text-center h-full'>
         <thead>
           <tr>
-            <th colSpan={7}><Skeleton height={50} width={955} /></th>
+            <th colSpan={7}><Skeleton height={50} /></th>
           </tr>
         </thead>
         <tbody>
