@@ -1,31 +1,31 @@
-import { useState } from "react";
-import { FaEye, FaEdit } from "react-icons/fa";
-
+import { FaEdit, FaEye } from "react-icons/fa";
+import CustomDataTable from "../../../app/components/CustomDatatable";
 import Modal from "../../../app/components/form/Modal";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
-import CustomDataTable from "../../../app/components/CustomDatatable";
+import { useState } from "react";
 import { Create } from "./Create";
-import { Edit } from "./Edit";
 import { View } from "./View";
+import { Edit } from "./Edit";
 import {
-  useAuthorStatusChangeMutation,
-  useDeleteAuthorByIdMutation,
-  useGetAuthorByIdQuery,
-  useGetAuthorQuery,
-} from "./authorApiSlice";
+  useDeleteIndustryByIdMutation,
+  useGetIndustryByIdQuery,
+  useGetIndustrysQuery,
+  useIndustryStatusChangeMutation,
+} from "./IndustryApiSlice";
 import { countries } from "../../../enums/Country";
 import PopularityBadge from "../../../app/components/PopularityBadge";
+import { languages } from "../../books/Language";
+import { movieCities } from "../../../enums/MovieCity";
 
-const Index = () => {
-  const { data: authorData, error, isLoading } = useGetAuthorQuery();
+export const Index = () => {
+  const { data: getDatas, isLoading } = useGetIndustrysQuery();
+  const getData = getDatas?.items || [];
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  const auhtor = authorData?.items || [];
+  const [statusChange] = useIndustryStatusChangeMutation();
+  const [deleteQuery] = useDeleteIndustryByIdMutation();
 
-  const [statusChange] = useAuthorStatusChangeMutation();
-  const [deleteQuery] = useDeleteAuthorByIdMutation();
-
-  const { data: userById, isLoading: isUserLoading } = useGetAuthorByIdQuery(
+  const { data: userById, isLoading: isUserLoading } = useGetIndustryByIdQuery(
     selectedUserId,
     {
       skip: !selectedUserId,
@@ -36,19 +36,19 @@ const Index = () => {
     {
       name: "SN",
       selector: (row, index) => index + 1,
-      width: "55px",
+      width: "60px",
     },
     {
-      name: "Full Name",
-      selector: (row) => row.firstName + " " + row.lastName || "N/A",
+      name: "Name",
+      selector: (row) => row.name || "",
       sortable: true,
       width: "auto",
     },
     {
-      name: "Nationality",
+      name: "Origin Country",
       selector: (row) => {
         const country = countries.find(
-          (country) => country.value === row.nationality
+          (country) => country.value === row.origin_country
         );
         return country ? country.label : "N/A";
       },
@@ -56,37 +56,53 @@ const Index = () => {
       width: "auto",
     },
     {
-      name: "Date of Birth",
-      selector: (row) =>
-        new Date(row.dob).toLocaleDateString().split("/").join("-") || "N/A",
-      sortable: true,
-      width: "140px",
+      name: "Origin City",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {movieCities
+            .filter((city) => row.origin_city.includes(city.value))
+            .map((city) => (
+              <span
+                key={city.value}
+                className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+              >
+                {city.label}
+              </span>
+            ))}
+        </div>
+      ),
+      width: "200px",
     },
     {
       name: "Popularity",
+      selector: (row) => <PopularityBadge popularity={row.popularity} /> || "",
+      width: "auto",
+    },
+    {
+      name: "Language",
       selector: (row) =>
-        <PopularityBadge popularity={row.popularity} /> || "N/A",
+        languages.find((lang) => lang.value === row.language)?.label || "N/A",
       sortable: true,
       width: "120px",
     },
   ];
 
-  const filterColumns = ["firstName", "popularity"];
+  const filterColumns = ["name", "ageGroup"];
 
   return isLoading ? (
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createAuthorId"
+        modalId="createUserModalId"
         buttonText="Create"
-        headingText="Create Author"
+        headingText="Create Book Category"
       >
         <Create />
       </Modal>
 
       <CustomDataTable
-        data={auhtor}
+        data={getData}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -95,17 +111,16 @@ const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewAuthorId",
-            title: "Author Details",
+            modalId: "viewUser",
+            title: "Book Category Details",
             btnIcon: FaEye,
             className: "text-primary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
             content: () => <View data={userById} isLoading={isUserLoading} />,
           },
           {
-            modalId: "editAuthorId",
             btnIcon: FaEdit,
-            title: "Author Edit",
+            title: "Book Category Edit",
             className: "text-secondary text-lg",
             setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
             content: () => <Edit data={userById} isLoading={isUserLoading} />,
@@ -116,5 +131,3 @@ const Index = () => {
     </div>
   );
 };
-
-export default Index;

@@ -1,27 +1,29 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { closeModal } from "../../modal/modalSlice";
 import FormInput from "../../../app/components/form/FormInput";
-import FormMultiSelect from "../../../app/components/form/FormSelect";
-import { ageGroupOptions } from "./AgeGroup";
-import {
-  useGetBookCategoryQuery,
-  useUpdateBookCategoryMutation,
-} from "./booksCategoryApiSlice";
 import FormTextArea from "../../../app/components/form/FormTextArea";
 import Checkbox from "../../../app/components/form/CheckBox";
 import FormButton from "../../../app/components/form/FormButton";
 import useUpdateHook from "../../../hooks/useUpdateHook";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
-import { BookCategorySchema } from "../../../validation/bookCategorySchema";
+import { countries } from "../../../enums/Country";
+import {
+  useGetIndustrysQuery,
+  useUpdateIndustryMutation,
+} from "./IndustryApiSlice";
+import { IndustrySchema } from "../../../validation/industrySchema";
+import FormSelect from "../../../app/components/form/FormSelect";
+import { movieCities } from "../../../enums/MovieCity";
+import { languages } from "../../books/Language";
 
 export const Edit = ({ data, isLoading, modalId }) => {
   const dispatch = useDispatch();
-  const { data: categoryData } = useGetBookCategoryQuery();
+  const { data: getDatas } = useGetIndustrysQuery();
 
-  const schema = BookCategorySchema(categoryData, data?.categoryName);
+  const schema = IndustrySchema(getDatas, data?.name);
 
   const {
     register,
@@ -30,30 +32,43 @@ export const Edit = ({ data, isLoading, modalId }) => {
     control,
     setValue,
     reset,
+    watch,
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      categoryName: data?.categoryName || "",
-      ageGroup: data?.ageGroup || [],
-      relatedGenres: data?.relatedGenres || [],
+      name: data?.name || "",
+      origin_country: data?.origin_country || "",
+      origin_city: data?.origin_city || [],
+      popularity: data?.popularity || 0,
+      language: data?.language || "",
       description: data?.description || "",
-      popularity: data?.popularity || "",
       status: data?.status,
     },
   });
 
   useEffect(() => {
     if (data) {
-      setValue("categoryName", data.categoryName || "");
-      setValue("ageGroup", data.ageGroup || []);
-      setValue("relatedGenres", data.relatedGenres || []);
+      setValue("name", data.name || "");
+      setValue("origin_country", data.origin_country || "");
+      setValue("origin_city", data.origin_city || []);
+      setValue("popularity", data.popularity || 0);
+      setValue("language", data.language || "");
       setValue("description", data.description || "");
-      setValue("popularity", data.popularity || "");
       setValue("status", data.status);
     }
   }, [data, setValue]);
 
-  const updateQuery = useUpdateBookCategoryMutation;
+  const watchCountry = watch("origin_country");
+
+  const filteredCities = useMemo(() => {
+    const cities = movieCities.filter((city) => city.country === watchCountry);
+    return cities.map((city) => ({
+      value: city.value,
+      label: city.label,
+    }));
+  }, [watchCountry]);
+
+  const updateQuery = useUpdateIndustryMutation;
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
@@ -74,26 +89,43 @@ export const Edit = ({ data, isLoading, modalId }) => {
     <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full p-4">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
-          label="Category Name"
-          name="categoryName"
-          placeholder="Category Name"
+          label="Name"
+          name="name"
+          placeholder="Name"
           required={true}
           className="col-span-2"
           register={register}
           errors={errors}
           maxLength={40}
         />
-
-        <FormMultiSelect
-          label="Age Group"
-          name="ageGroup"
-          isMulti={true}
+        <FormSelect
+          label="Origin Country"
+          name="origin_country"
           control={control}
           required={true}
           className="col-span-2"
-          options={ageGroupOptions}
+          options={countries}
         />
-
+        <FormSelect
+          label="Origin Cities"
+          name="origin_city"
+          control={control}
+          required={true}
+          className="col-span-2"
+          options={filteredCities}
+          isMulti={true}
+          isDisabled={!watchCountry}
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+        <FormSelect
+          label="Languages"
+          name="language"
+          control={control}
+          required={true}
+          className="col-span-2"
+          options={languages}
+        />
         <FormInput
           label="Popularity"
           type="number"
@@ -105,15 +137,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
-         maxDigit={3}
+          maxDigit={3}
         />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormTextArea
           label="Description"
           name="description"
-          required={true}
           className="col-span-3"
           placeholder="Description"
           register={register}
@@ -121,14 +149,12 @@ export const Edit = ({ data, isLoading, modalId }) => {
           maxLength={300}
         />
       </div>
-
       <Checkbox
         label="Status"
         name="status"
         className="mt-4"
         register={register}
       />
-
       <FormButton
         disabled={isUpdating || isSubmitting}
         isLoading={isUpdating || isSubmitting}

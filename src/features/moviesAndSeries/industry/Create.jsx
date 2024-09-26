@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,18 +7,21 @@ import FormButton from "../../../app/components/form/FormButton";
 import usePostHook from "../../../hooks/usePostHook";
 import { closeModal } from "../../modal/modalSlice";
 import FormInput from "../../../app/components/form/FormInput";
-import FormMultiSelect from "../../../app/components/form/FormSelect";
+import FormSelect from "../../../app/components/form/FormSelect";
 import FormTextArea from "../../../app/components/form/FormTextArea";
-import { ageGroupOptions } from "../../books/bookscategory/AgeGroup";
-import { useGetGenresQuery, usePostGenreMutation } from "./GenreApiSlice";
-import { GenreSchema } from "../../../validation/genreSchema";
+import {
+  useGetIndustrysQuery,
+  usePostIndustryMutation,
+} from "./IndustryApiSlice";
+import { IndustrySchema } from "../../../validation/industrySchema";
+import { countries } from "../../../enums/Country";
+import { movieCities } from "../../../enums/MovieCity";
+import { languages } from "../../books/Language";
 
 export const Create = ({ modalId }) => {
   const dispatch = useDispatch();
-
-  const { data: genreData } = useGetGenresQuery();
-
-  const schema = GenreSchema(genreData);
+  const { data: getDatas } = useGetIndustrysQuery();
+  const schema = IndustrySchema(getDatas);
 
   const {
     register,
@@ -26,11 +29,27 @@ export const Create = ({ modalId }) => {
     formState: { errors, isSubmitting },
     control,
     reset,
-  } = useForm({ resolver: zodResolver(schema) });
+    watch,
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      origin_country: "",
+      origin_city: [],
+    },
+  });
 
-  const postQuery = usePostGenreMutation;
+  const postQuery = usePostIndustryMutation;
   const { onSubmit, isLoading } = usePostHook(postQuery);
 
+  const watchCountry = watch("origin_country");
+
+  const filteredCities = useMemo(() => {
+    const cities = movieCities.filter((city) => city.country === watchCountry);
+    return cities.map((city) => ({
+      value: city.value,
+      label: city.label,
+    }));
+  }, [watchCountry]);
   const handleFormSubmit = useCallback(
     (data) => {
       data.popularity = Number(data.popularity);
@@ -49,7 +68,7 @@ export const Create = ({ modalId }) => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
           label="Name"
           name="name"
@@ -60,19 +79,47 @@ export const Create = ({ modalId }) => {
           errors={errors}
           maxLength={40}
         />
-        <FormMultiSelect
-          label="Age Group"
-          name="ageGroup"
+        <FormSelect
+          label="Origin Country"
+          name="origin_country"
+          control={control}
+          className="col-span-2"
+          options={countries}
+        />
+        <FormSelect
+          label="Origin Cities"
+          name="origin_city"
+          control={control}
+          className="col-span-2"
+          options={filteredCities}
           isMulti={true}
+          isDisabled={!watchCountry}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+        <FormSelect
+          label="Languages"
+          name="language"
           control={control}
           required={true}
           className="col-span-2"
-          options={ageGroupOptions}
+          options={languages}
         />
-        
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <FormInput
+          label="Popularity"
+          type="number"
+          name="popularity"
+          placeholder="0"
+          min="0"
+          max="100"
+          required={true}
+          register={register}
+          errors={errors}
+          className="col-span-2"
+          maxDigit={3}
+        />
         <FormTextArea
           label="Description"
           name="description"

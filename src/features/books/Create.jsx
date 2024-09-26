@@ -132,9 +132,7 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
-          onInput={(e) => {
-            e.target.value = e.target.value.slice(0, 10); // 10 digits only
-          }}
+          maxDigit={10}
         />
         <FormInput
           label="ISBN"
@@ -146,9 +144,7 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
-          onInput={(e) => {
-            e.target.value = e.target.value.slice(0, 13); // 13 digits only
-          }}
+          maxDigit={13}
         />
       </div>
 

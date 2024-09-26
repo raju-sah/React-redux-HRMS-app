@@ -75,10 +75,7 @@ export const Create = ({ modalId }) => {
           control={control}
           required={true}
           className="col-span-2"
-          options={countries.map((country) => ({
-            value: country.code,
-            label: country.name,
-          }))}
+          options={countries}
         />
       </div>
 
@@ -115,9 +112,7 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
-          onInput={(e) => {
-            e.target.value = e.target.value.slice(0, 3);
-          }}
+          maxDigit={3}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -15,6 +15,7 @@ import CategoryIndex from "../features/books/bookscategory/Index";
 import AuthorIndex from "../features/books/author/Index";
 import BookIndex from "../features/books/Index";
 import { Index as Genres } from "../features/moviesAndSeries/genres/Index";
+import {Index as Industry } from "../features/moviesAndSeries/industry/Index";
 import { Index as Movies } from "../features/moviesAndSeries/movies/Index";
 import { Index as WebSeries } from "../features/moviesAndSeries/web-series/Index";
 import { Index as Animes } from "../features/moviesAndSeries/animes/Index";
@@ -74,6 +75,7 @@ const AppRoutes = () => {
               <Route path="/web-series" element={<WebSeries />} />
               <Route path="/animes" element={<Animes />} />
               <Route path="/genres" element={<Genres />} />
+              <Route path="/industries" element={<Industry />} />
             </Route>
 
             {/* Catch-all route */}

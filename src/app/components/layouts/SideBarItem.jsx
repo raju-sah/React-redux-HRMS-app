@@ -1,6 +1,7 @@
 import { FiHome, FiSettings, FiList, FiUserPlus, FiUserX, FiBookOpen,  } from 'react-icons/fi';
 import Sidebar from './Sidebar';
 import { BiCategory } from 'react-icons/bi';
+import { FaTv } from 'react-icons/fa';
 
 const SideBarItem = () => {
   const menuItems = [
@@ -24,12 +25,13 @@ const SideBarItem = () => {
     },
     {
       label: 'Movies & Series',
-      icon: <FiBookOpen size={15} />,
+      icon: <FaTv size={15} />,
       children: [
         { label: 'Movies', path: '/movies', icon: <FiList size={15} /> },
         { label: 'Web Series', path: '/web-series', icon: <BiCategory size={15} /> },
         { label: 'Anime', path: '/animes', icon: <FiList size={15} /> },
         { label: 'Genres', path: '/genres', icon: <FiList size={15} /> },
+        { label: 'Industries', path: '/industries', icon: <FiList size={15} /> },
       ]
     },
     { label: 'Settings', icon: <FiSettings size={15} />, path: '/settings' },

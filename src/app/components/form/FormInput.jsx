@@ -8,6 +8,7 @@ function FormInput({
   errors = {},
   required = false,
   className = "",
+  maxDigit = 50,
   ...props
 }) {
   return (
@@ -27,6 +28,12 @@ function FormInput({
             ? "border-red-500 focus:border-red-500"
             : "border-gray-300 focus:border-blue-500"
         }`}
+        onInput={(e) => {
+          if (type === "number") {
+            e.target.value = e.target.value.slice(0, maxDigit);
+          }
+        }}
+       
         {...props}
       />
       {errors[name] && (
@@ -44,7 +51,7 @@ FormInput.propTypes = {
   errors: PropTypes.object,
   required: PropTypes.bool,
   className: PropTypes.string,
-  ...PropTypes.shape,
+  maxDigit: PropTypes.number,
 };
 
 export default FormInput;

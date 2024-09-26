@@ -8,6 +8,7 @@ import { genreApi } from "../features/moviesAndSeries/genres/GenreApiSlice";
 import { movieApi } from "../features/moviesAndSeries/movies/MovieApiSlice";
 import { webSeriesApi } from "../features/moviesAndSeries/web-series/WebSeriesApiSlice";
 import { animeApi } from "../features/moviesAndSeries/animes/AnimeApiSlice";
+import { industryApi } from "../features/moviesAndSeries/industry/IndustryApiSlice";
 
 const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ const store = configureStore({
     [movieApi.reducerPath]: movieApi.reducer,
     [webSeriesApi.reducerPath]: webSeriesApi.reducer,
     [animeApi.reducerPath]: animeApi.reducer,
+    [industryApi.reducerPath]: industryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -28,7 +30,8 @@ const store = configureStore({
       .concat(genreApi.middleware)
       .concat(movieApi.middleware)
       .concat(webSeriesApi.middleware)
-      .concat(animeApi.middleware),
+      .concat(animeApi.middleware)
+      .concat(industryApi.middleware),
 
 });
 

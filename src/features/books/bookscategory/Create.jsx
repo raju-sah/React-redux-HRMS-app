@@ -36,7 +36,6 @@ export const Create = ({ modalId }) => {
 
   const handleFormSubmit = useCallback(
     (data) => {
-      console.log(data);
       data.popularity = Number(data.popularity);
       data.status = Boolean(data.status);
 
@@ -84,9 +83,7 @@ export const Create = ({ modalId }) => {
           register={register}
           errors={errors}
           className="col-span-2"
-          onInput={(e) => {
-            e.target.value = e.target.value.slice(0, 3);
-          }}
+          maxDigit={3}
         />
       </div>
 
