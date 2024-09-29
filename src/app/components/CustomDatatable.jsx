@@ -44,7 +44,7 @@ const CustomDataTable = ({
   const customStyles = {
     rows: {
       style: {
-        minHeight: "40px", // override the row height
+        minHeight: "45px", // overridding the default row height
       },
     },
     headCells: {
@@ -66,7 +66,7 @@ const CustomDataTable = ({
           StatusChange={statusColumn.onChange}
         />
       ),
-      width: "80px",
+      width: "75px",
     }),
     [statusColumn]
   );
@@ -74,6 +74,7 @@ const CustomDataTable = ({
   const actionColumn = useMemo(
     () => ({
       name: "Actions",
+      width: "auto",
       cell: (row) => (
         <div className="flex space-x-2">
           {modals.map((modal, index) => (
@@ -83,8 +84,6 @@ const CustomDataTable = ({
               headingText={modal.title}
               className={modal.className}
               setbtnIdFunc={() => modal.setbtnIdFunc(row)}
-              modalId={`modal-${row._uuid}-${index}`}
-
             >
               {typeof modal.content === "function"
                 ? modal.content(row)
@@ -132,7 +131,7 @@ const CustomDataTable = ({
         subHeaderComponent={subHeaderComponent}
         persistTableHead
         fixedHeader
-        // fixedHeaderScrollHeight="400px"
+        fixedHeaderScrollHeight="541px"
         // selectableRows // uncomment this line if you want to enable row selection
         // dense
         customStyles={customStyles}

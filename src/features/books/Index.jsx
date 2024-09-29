@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
 
 import { Create } from "./Create";
@@ -19,8 +19,6 @@ import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
 
 const Index = () => {
   const { data: getDatas, isLoading } = useGetBooksQuery();
-  const getData = getDatas?.items || [];
-
   const { data: authorData, isLoading: isLoadingAuthor } = useGetAuthorQuery();
   const { data: booksCategoryData, isLoading: isLoadingBooksCategory } =
     useGetBookCategoryQuery();
@@ -48,6 +46,7 @@ const Index = () => {
       selector: (row) => row.name || "N/A",
       sortable: true,
       width: "200px",
+      cell: (row) => row.name || "N/A",
     },
     {
       name: "Author",
@@ -65,7 +64,7 @@ const Index = () => {
             ))}
         </div>
       ),
-      width: "150px",
+      width: "170px",
     },
     {
       name: "Category",
@@ -100,11 +99,28 @@ const Index = () => {
     },
   ];
 
+  const getData = useMemo(() => {
+    return (getDatas?.items || []).map((item) => ({
+      ...item,
+      authorNames: authorData?.items
+        .filter((auth) => item.author.includes(auth?._uuid))
+        .map((auth) => `${auth?.firstName} ${auth?.lastName}`)
+        .join(", "),
+      categoryNames: booksCategoryData?.items
+        .filter((cat) => item.category.includes(cat?._uuid))
+        .map((cat) => cat?.categoryName),
+      languageName:
+        languages.find((lang) => lang.value === item.language)?.label || "N/A",
+    }));
+  }, [getDatas, authorData, booksCategoryData]);
+
   const filterColumns = [
     "name",
+    "authorNames",
+    "categoryNames",
     "publication",
     "isbn",
-    "language",
+    "languageName",
     "edition",
     "price",
   ];
@@ -113,11 +129,7 @@ const Index = () => {
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
-      <Modal
-        modalId={`createModalId-${Date.now()}`}
-        buttonText="Create"
-        headingText="Create Book"
-      >
+      <Modal buttonText="Create" headingText="Create Book">
         <Create />
       </Modal>
 
@@ -131,17 +143,15 @@ const Index = () => {
         }}
         modals={[
           {
-            modalId: `viewModalId-${Date.now()}`,
             title: "View Book",
             btnIcon: FaEye,
-            className: "text-primary text-lg",
+            className: "text-primary text-lg", // style for the icon
             setbtnIdFunc: (row) => {
               setselectedItemId(row._uuid);
             },
             content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
-            modalId: `editModalId-${Date.now()}`,
             title: "Edit Book",
             btnIcon: FaEdit,
             className: "text-secondary text-lg",

@@ -1,31 +1,30 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RxCross2 } from "react-icons/rx";
 import { closeModal, openModal } from "../../../features/modal/modalSlice";
-import React from "react";
+import React, { useId } from "react";
 import PropTypes from "prop-types";
 
 const Modal = ({
-  modalId,
   headingText,
   buttonText = "",
   children,
   icon: Icon,
   className,
   setbtnIdFunc,
-  maxHeight = "80vh", // New prop for controlling max height
 }) => {
   const dispatch = useDispatch();
-  const modalState = useSelector((state) => state.modal.openModals[modalId]);
+  const generatedModalId = useId(); // Automatically generated ID
+  const modalState = useSelector((state) => state.modal.openModals[generatedModalId]);
 
   const handleOpen = () => {
     if (setbtnIdFunc) {
       setbtnIdFunc();
     }
-    dispatch(openModal(modalId));
+    dispatch(openModal(generatedModalId));
   };
 
   const handleClose = () => {
-    dispatch(closeModal(modalId));
+    dispatch(closeModal(generatedModalId));
   };
 
   return (
@@ -45,7 +44,7 @@ const Modal = ({
       )}
       {modalState && modalState.isOpen && (
         <div className="fixed inset-0 bg-primary bg-opacity-60 flex items-center justify-center p-4 z-10">
-          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full flex flex-col">
             <div className="flex justify-between p-3 bg-[#021526] text-white">
               <h2 className="text-lg font-bold">{headingText}</h2>
               <button
@@ -55,10 +54,10 @@ const Modal = ({
                 <RxCross2 className="w-8 h-6" />
               </button>
             </div>
-            <div className={`px-6 pb-6 overflow-y-auto`} style={{ maxHeight }}>
-              {typeof children === 'function'
-                ? children({ modalId })
-                : React.cloneElement(children, { modalId })}
+            <div className={`px-6 pb-6 overflow-y-auto`}>
+              {typeof children === "function"
+                ? children({ modalId: generatedModalId })
+                : React.cloneElement(children, { modalId: generatedModalId })}
             </div>
           </div>
         </div>
@@ -68,14 +67,12 @@ const Modal = ({
 };
 
 Modal.propTypes = {
-  modalId: PropTypes.string.isRequired,
   headingText: PropTypes.string.isRequired,
   buttonText: PropTypes.string,
   children: PropTypes.node.isRequired,
   icon: PropTypes.elementType,
   className: PropTypes.string,
   setbtnIdFunc: PropTypes.func,
-  maxHeight: PropTypes.string,
 };
 
 export default Modal;

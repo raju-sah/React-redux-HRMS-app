@@ -65,11 +65,7 @@ export const Index = () => {
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
-      <Modal
-        modalId={`createModalId-${Date.now()}`}
-        buttonText="Create"
-        headingText="Create Book Category"
-      >
+      <Modal buttonText="Create" headingText="Create Book Category">
         <Create />
       </Modal>
 
@@ -83,7 +79,6 @@ export const Index = () => {
         }}
         modals={[
           {
-            modalId: `viewModalId-${Date.now()}`,
             title: "View Genres",
             btnIcon: FaEye,
             className: "text-primary text-lg",
@@ -91,7 +86,6 @@ export const Index = () => {
             content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
-            modalId: `editModalId-${Date.now()}`,
             title: "Edit Genres",
             btnIcon: FaEdit,
             className: "text-secondary text-lg",

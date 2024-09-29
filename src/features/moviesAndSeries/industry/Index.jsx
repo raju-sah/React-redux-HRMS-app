@@ -2,7 +2,7 @@ import { FaEdit, FaEye } from "react-icons/fa";
 import CustomDataTable from "../../../app/components/CustomDatatable";
 import Modal from "../../../app/components/form/Modal";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Create } from "./Create";
 import { View } from "./View";
 import { Edit } from "./Edit";
@@ -19,7 +19,6 @@ import { movieCities } from "../../../enums/MovieCity";
 
 export const Index = () => {
   const { data: getDatas, isLoading } = useGetIndustrysQuery();
-  const getData = getDatas?.items || [];
   const [selectedItemId, setSelectedItemId] = useState(null);
 
   const [statusChange] = useIndustryStatusChangeMutation();
@@ -46,12 +45,7 @@ export const Index = () => {
     },
     {
       name: "Origin Country",
-      selector: (row) => {
-        const country = countries.find(
-          (country) => country.value === row.origin_country
-        );
-        return country ? country.label : "N/A";
-      },
+      selector: (row) => countries.find(country => country.value === row.origin_country)?.label || "N/A",
       sortable: true,
       width: "auto",
     },
@@ -80,24 +74,29 @@ export const Index = () => {
     },
     {
       name: "Language",
-      selector: (row) =>
-        languages.find((lang) => lang.value === row.language)?.label || "N/A",
+      selector: (row) => languages.find(lang => lang.value === row.language)?.label || "N/A",
       sortable: true,
       width: "120px",
     },
   ];
 
-  const filterColumns = ["name", "ageGroup"];
+  const getData = useMemo(() => {
+    return (getDatas?.items || []).map((item) => ({
+      ...item,
+      originCountry: countries.find(country => country.value === item.origin_country)?.label || "N/A",
+      originCity: movieCities
+      .filter((city) => item.origin_city.includes(city.value))
+      .map((city) => ( city.label)),
+      languageName: languages.find(lang => lang.value === item.language)?.label || "N/A",
+    }));
+  }, [getDatas]);
+  const filterColumns = ["name", "originCountry", "originCity", "languageName"];
 
   return isLoading ? (
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
-      <Modal
-        modalId={`createModalId-${Date.now()}`}
-        buttonText="Create"
-        headingText="Create Industry"
-      >
+      <Modal buttonText="Create" headingText="Create Industry">
         <Create />
       </Modal>
 
@@ -111,18 +110,16 @@ export const Index = () => {
         }}
         modals={[
           {
-            modalId: `viewModalId-${Date.now()}`,
             title: "View Industry",
             btnIcon: FaEye,
-            className: "text-primary text-lg",
+            className: "text-primary text-lg", // style for the icon
             setbtnIdFunc: (row) => setSelectedItemId(row._uuid),
             content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
-            modalId: `editModalId-${Date.now()}`,
             title: "Edit Industry",
             btnIcon: FaEdit,
-            className: "text-secondary text-lg",
+            className: "text-secondary text-lg", // style for the icon
             setbtnIdFunc: (row) => setSelectedItemId(row._uuid),
             content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
