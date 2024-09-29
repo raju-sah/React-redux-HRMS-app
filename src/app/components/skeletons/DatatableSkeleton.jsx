@@ -19,8 +19,8 @@ const DataTableSkeleton = () => {
           <tr>
             <td><Skeleton count={7} height={40} width={35} /></td>
             <td><Skeleton count={7} height={40} width={150} /></td>
-            <td><Skeleton count={7} height={40} width={200} /></td>
-            <td><Skeleton count={7} height={40} width={35} /></td>
+            <td><Skeleton count={7} height={40} width={150} /></td>
+            <td><Skeleton count={7} height={40} width={150} /></td>
             <td><Skeleton count={7} height={40} width={150} /></td>
             <td><Skeleton count={7} height={40} width={50} /></td>
             <td><Skeleton count={7} height={40} width={150} /></td>

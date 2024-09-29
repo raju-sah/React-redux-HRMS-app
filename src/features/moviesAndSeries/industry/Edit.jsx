@@ -71,11 +71,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const updateQuery = useUpdateIndustryMutation;
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
-  const handleFormSubmit = useCallback(
-    (datas) => {
-      datas.popularity = Number(datas.popularity);
+  const handleEditFormSubmit = useCallback(
+    (sendDatas) => {
+      sendDatas.popularity = Number(sendDatas.popularity);
 
-      onSubmit({ id: data._uuid, ...datas }).then(() => {
+      onSubmit({ id: data._uuid, ...sendDatas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
@@ -86,7 +86,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
   return isLoading ? (
     <EditSkeleton />
   ) : (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full p-4">
+    <form
+      onSubmit={handleSubmit(handleEditFormSubmit)}
+      className="mx-auto p-2 mt-5 rounded-lg"
+    >
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
           label="Name"
@@ -102,7 +105,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
           label="Origin Country"
           name="origin_country"
           control={control}
-          required={true}
           className="col-span-2"
           options={countries}
         />
@@ -110,13 +112,13 @@ export const Edit = ({ data, isLoading, modalId }) => {
           label="Origin Cities"
           name="origin_city"
           control={control}
-          required={true}
           className="col-span-2"
           options={filteredCities}
           isMulti={true}
           isDisabled={!watchCountry}
         />
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
         <FormSelect
           label="Languages"
@@ -149,6 +151,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
           maxLength={300}
         />
       </div>
+
       <Checkbox
         label="Status"
         name="status"

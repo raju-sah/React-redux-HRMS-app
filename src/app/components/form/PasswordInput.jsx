@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export const PasswordInput = ({
@@ -31,7 +32,7 @@ export const PasswordInput = ({
           id={name}
           type={showPassword ? "text" : "password"}
           placeholder={label}
-          className={`w-full px-2 py-1.5 border rounded-lg focus:outline-none ${
+          className={`w-full px-2 py-1.5 border rounded-lg focus:border-blue-500 focus:border-2 focus:outline-none ${
             errors[name]
               ? "border-red-500 focus:border-red-500"
               : "border-gray-300 focus:border-blue-500"
@@ -54,4 +55,13 @@ export const PasswordInput = ({
       )}
     </div>
   );
+};
+PasswordInput.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  register: PropTypes.func.isRequired,
+  validationRules: PropTypes.object,
+  errors: PropTypes.object,
+  required: PropTypes.bool,
+  className: PropTypes.string,
 };

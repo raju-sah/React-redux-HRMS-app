@@ -52,10 +52,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
-    (datas) => {
-      datas.popularity = Number(datas.popularity);
+    (sendDatas) => {
+      sendDatas.popularity = Number(sendDatas.popularity);
 
-      onSubmit({ id: data._uuid, ...datas }).then(() => {
+      onSubmit({ id: data._uuid, ...sendDatas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });
@@ -66,7 +66,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
   return isLoading ? (
     <EditSkeleton />
   ) : (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full p-4">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="mx-auto p-2 mt-5 rounded-lg"
+    >
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <FormInput
           label="Name"

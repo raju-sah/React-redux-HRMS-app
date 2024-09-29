@@ -23,7 +23,7 @@ function FormInput({
         {...register(name, { required })}
         id={name}
         type={type}
-        className={`w-full px-2 py-1.5 border rounded-lg focus:border-primary focus:outline-none ${
+        className={`w-full px-2 py-1.5 border rounded-lg focus:border-blue-500 focus:border-2 focus:outline-none h-10 ${
           errors[name]
             ? "border-red-500 focus:border-red-500"
             : "border-gray-300 focus:border-blue-500"

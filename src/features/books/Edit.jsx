@@ -68,10 +68,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
-    (datas) => {
-      datas.language = Number(datas.language);
+    (sendDatas) => {
+      sendDatas.language = Number(sendDatas.language);
 
-      onSubmit({ id: data._uuid, ...datas }).then(() => {
+      onSubmit({ id: data._uuid, ...sendDatas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
       });

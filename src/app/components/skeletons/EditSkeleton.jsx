@@ -1,20 +1,15 @@
-import Skeleton from 'react-loading-skeleton'
+import Skeleton from "react-loading-skeleton";
 
 export default function EditSkeleton() {
   return (
-    <div className="w-full p-4">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
+    <div className="mx-auto p-2 mt-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <Skeleton height={40} count={3} className="mb-4" />
+        <Skeleton height={40} count={3} className="mb-4" />
+        <Skeleton height={40} count={3} className="mb-4" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
-        <Skeleton height={30} className="col-span-2" />
-        <Skeleton height={30} className="col-span-1" />
-        <Skeleton height={30} className="col-span-1" />
-      </div>
-      <Skeleton height={20} width={70} className="mb-4" />
-      <Skeleton height={30} width={70} />
+      <Skeleton height={20} width={50} className="mb-4" />
+      <Skeleton height={30} width={60} />
     </div>
-  )
+  );
 }

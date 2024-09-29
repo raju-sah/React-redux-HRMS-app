@@ -20,15 +20,15 @@ import { movieCities } from "../../../enums/MovieCity";
 export const Index = () => {
   const { data: getDatas, isLoading } = useGetIndustrysQuery();
   const getData = getDatas?.items || [];
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   const [statusChange] = useIndustryStatusChangeMutation();
   const [deleteQuery] = useDeleteIndustryByIdMutation();
 
-  const { data: userById, isLoading: isUserLoading } = useGetIndustryByIdQuery(
-    selectedUserId,
+  const { data: dataById, isLoading: isFetching } = useGetIndustryByIdQuery(
+    selectedItemId,
     {
-      skip: !selectedUserId,
+      skip: !selectedItemId,
     }
   );
 
@@ -94,9 +94,9 @@ export const Index = () => {
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createUserModalId"
+        modalId={`createModalId-${Date.now()}`}
         buttonText="Create"
-        headingText="Create Book Category"
+        headingText="Create Industry"
       >
         <Create />
       </Modal>
@@ -111,19 +111,20 @@ export const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewUser",
-            title: "Book Category Details",
+            modalId: `viewModalId-${Date.now()}`,
+            title: "View Industry",
             btnIcon: FaEye,
             className: "text-primary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <View data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setSelectedItemId(row._uuid),
+            content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
+            modalId: `editModalId-${Date.now()}`,
+            title: "Edit Industry",
             btnIcon: FaEdit,
-            title: "Book Category Edit",
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <Edit data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setSelectedItemId(row._uuid),
+            content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

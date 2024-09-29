@@ -17,18 +17,18 @@ import { countries } from "../../../enums/Country";
 import PopularityBadge from "../../../app/components/PopularityBadge";
 
 const Index = () => {
-  const { data: authorData, error, isLoading } = useGetAuthorQuery();
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const { data: getDatas, isLoading } = useGetAuthorQuery();
+  const [selectedItemId, setselectedItemId] = useState(null);
 
-  const auhtor = authorData?.items || [];
+  const getData = getDatas?.items || [];
 
   const [statusChange] = useAuthorStatusChangeMutation();
   const [deleteQuery] = useDeleteAuthorByIdMutation();
 
-  const { data: userById, isLoading: isUserLoading } = useGetAuthorByIdQuery(
-    selectedUserId,
+  const { data: dataById, isLoading: isFetching } = useGetAuthorByIdQuery(
+    selectedItemId,
     {
-      skip: !selectedUserId,
+      skip: !selectedItemId,
     }
   );
 
@@ -78,7 +78,7 @@ const Index = () => {
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createAuthorId"
+        modalId={`createModalId-${Date.now()}`}
         buttonText="Create"
         headingText="Create Author"
       >
@@ -86,7 +86,7 @@ const Index = () => {
       </Modal>
 
       <CustomDataTable
-        data={auhtor}
+        data={getData}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -95,20 +95,20 @@ const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewAuthorId",
-            title: "Author Details",
+            modalId: `viewModalId-${Date.now()}`,
+            title: "View Author",
             btnIcon: FaEye,
             className: "text-primary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <View data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
-            modalId: "editAuthorId",
+            modalId: `editModalId-${Date.now()}`,
             btnIcon: FaEdit,
-            title: "Author Edit",
+            title: "Edit Author",
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <Edit data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

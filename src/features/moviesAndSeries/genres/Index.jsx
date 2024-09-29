@@ -15,17 +15,17 @@ import { Edit } from "./Edit";
 import { ageGroupOptions } from "../../books/bookscategory/AgeGroup";
 
 export const Index = () => {
-  const { data: booksCategoryData, isLoading } = useGetGenresQuery();
-  const booksCategory = booksCategoryData?.items || [];
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const { data: getDatas, isLoading } = useGetGenresQuery();
+  const getData = getDatas?.items || [];
+  const [selectedItemId, setselectedItemId] = useState(null);
 
   const [statusChange] = useGenreStatusChangeMutation();
   const [deleteQuery] = useDeleteGenreByIdMutation();
 
-  const { data: userById, isLoading: isUserLoading } = useGetGenreByIdQuery(
-    selectedUserId,
+  const { data: dataById, isLoading: isFetching } = useGetGenreByIdQuery(
+    selectedItemId,
     {
-      skip: !selectedUserId,
+      skip: !selectedItemId,
     }
   );
 
@@ -66,7 +66,7 @@ export const Index = () => {
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createUserModalId"
+        modalId={`createModalId-${Date.now()}`}
         buttonText="Create"
         headingText="Create Book Category"
       >
@@ -74,7 +74,7 @@ export const Index = () => {
       </Modal>
 
       <CustomDataTable
-        data={booksCategory}
+        data={getData}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -83,19 +83,20 @@ export const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewUser",
-            title: "Book Category Details",
+            modalId: `viewModalId-${Date.now()}`,
+            title: "View Genres",
             btnIcon: FaEye,
             className: "text-primary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <View data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
+            modalId: `editModalId-${Date.now()}`,
+            title: "Edit Genres",
             btnIcon: FaEdit,
-            title: "Book Category Edit",
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <Edit data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

@@ -16,17 +16,19 @@ import {
 import PopularityBadge from "../../../app/components/PopularityBadge";
 
 const Index = () => {
-  const { data: booksCategoryData, isLoading } = useGetBookCategoryQuery();
-  const booksCategory = booksCategoryData?.items || [];
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const { data: getDatas, isLoading } = useGetBookCategoryQuery();
+  const getData = getDatas?.items || [];
+  const [selectedItemId, setselectedItemId] = useState(null);
 
   const [statusChange] = useBookCategoryStatusChangeMutation();
   const [deleteQuery] = useDeleteBookCategoryByIdMutation();
 
-  const { data: userById, isLoading: isUserLoading } =
-    useGetBookCategoryByIdQuery(selectedUserId, {
-      skip: !selectedUserId,
-    });
+  const { data: dataById, isLoading: isFetching } = useGetBookCategoryByIdQuery(
+    selectedItemId,
+    {
+      skip: !selectedItemId,
+    }
+  );
 
   const columns = [
     {
@@ -50,32 +52,28 @@ const Index = () => {
       name: "Age Group",
       selector: (row) => (
         <div className="flex flex-wrap gap-1 py-2">
-        {row.ageGroup?.map((groupIndex) => (
-          <span
-            key={groupIndex}
-            className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
-          >
-            {ageGroupOptions[groupIndex]?.label}
-          </span>
-        ))}
-      </div>
+          {row.ageGroup?.map((groupIndex) => (
+            <span
+              key={groupIndex}
+              className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+            >
+              {ageGroupOptions[groupIndex]?.label}
+            </span>
+          ))}
+        </div>
       ),
       width: "auto",
-    }
-    
+    },
   ];
 
-  const filterColumns = [
-    "categoryName",
-    "popularity",
-  ];
+  const filterColumns = ["categoryName", "popularity"];
 
   return isLoading ? (
     <DataTableSkeleton />
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createUserModalId"
+        modalId={`createModalId-${Date.now()}`}
         buttonText="Create"
         headingText="Create Book Category"
       >
@@ -83,7 +81,7 @@ const Index = () => {
       </Modal>
 
       <CustomDataTable
-        data={booksCategory}
+        data={getData}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -92,19 +90,20 @@ const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewUser",
-            title: "Book Category Details",
+            modalId: `viewModalId-${Date.now()}`,
+            title: "View Book Category",
             btnIcon: FaEye,
             className: "text-primary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <View data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
+            modalId: `editModalId-${Date.now()}`,
             btnIcon: FaEdit,
-            title: "Book Category Edit",
+            title: "Edit Book Category",
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
-            content: () => <Edit data={userById} isLoading={isUserLoading} />,
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
         deleteButton={{ id: (row) => row._uuid, deleteQuery }}

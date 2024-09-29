@@ -21,7 +21,7 @@ function FormTextArea({
         id={name}
         name={name}
         rows={rows}
-        className="w-full px-2 py-1.5 border rounded-lg focus:border-primary focus:outline-none"
+        className="w-full px-2 py-1.5 border rounded-lg focus:border-blue-500 focus:border-2 focus:outline-none"
         {...register(name)}
         {...props}
       >

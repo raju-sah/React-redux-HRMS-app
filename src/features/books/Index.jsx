@@ -18,22 +18,22 @@ import { useGetAuthorQuery } from "./author/authorApiSlice";
 import { useGetBookCategoryQuery } from "./bookscategory/booksCategoryApiSlice";
 
 const Index = () => {
-  const { data: booksData, isLoading } = useGetBooksQuery();
-  const books = booksData?.items || [];
+  const { data: getDatas, isLoading } = useGetBooksQuery();
+  const getData = getDatas?.items || [];
 
   const { data: authorData, isLoading: isLoadingAuthor } = useGetAuthorQuery();
   const { data: booksCategoryData, isLoading: isLoadingBooksCategory } =
     useGetBookCategoryQuery();
 
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedItemId, setselectedItemId] = useState(null);
 
   const [statusChange] = useBookStatusChangeMutation();
   const [deleteQuery] = useDeleteBookByIdMutation();
 
   const { data: dataById, isLoading: isFetching } = useGetBookByIdQuery(
-    selectedUserId,
+    selectedItemId,
     {
-      skip: !selectedUserId,
+      skip: !selectedItemId,
     }
   );
 
@@ -114,7 +114,7 @@ const Index = () => {
   ) : (
     <div className="max-w-6xl mx-auto p-2 mt-2">
       <Modal
-        modalId="createBookModalId"
+        modalId={`createModalId-${Date.now()}`}
         buttonText="Create"
         headingText="Create Book"
       >
@@ -122,7 +122,7 @@ const Index = () => {
       </Modal>
 
       <CustomDataTable
-        data={books}
+        data={getData}
         columns={columns}
         filterColumns={filterColumns}
         statusColumn={{
@@ -131,21 +131,21 @@ const Index = () => {
         }}
         modals={[
           {
-            modalId: "viewBookModalId",
-            title: "Book Details",
+            modalId: `viewModalId-${Date.now()}`,
+            title: "View Book",
             btnIcon: FaEye,
             className: "text-primary text-lg",
             setbtnIdFunc: (row) => {
-              setSelectedUserId(row._uuid);
+              setselectedItemId(row._uuid);
             },
             content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
-            modalId: "editBookModalId",
-            title: "Book Edit",
+            modalId: `editModalId-${Date.now()}`,
+            title: "Edit Book",
             btnIcon: FaEdit,
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setSelectedUserId(row._uuid),
+            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
             content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
