@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import CheckBox from "../../app/components/form/CheckBox";
 import FormButton from "../../app/components/form/FormButton";
@@ -30,22 +30,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      image_url: data?.image_url || "",
-      name: data?.name || "",
-      author: data?.author || [],
-      category: data?.category || [],
-      price: data?.price || "",
-      publication: data?.publication || "",
-      isbn: data?.isbn || "",
-      edition: data?.edition || "",
-      language: data?.language || "",
-      description: data?.description || "",
-      status: data?.status,
-    },
+    defaultValues: data || {},
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (data) {
       setValue("image_url", data.image_url || "");
       setValue("name", data.name || "");

@@ -35,18 +35,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
     watch,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: data?.name || "",
-      origin_country: data?.origin_country || "",
-      origin_city: data?.origin_city || [],
-      popularity: data?.popularity || 0,
-      language: data?.language || "",
-      description: data?.description || "",
-      status: data?.status,
-    },
+    defaultValues: data || {},
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (data) {
       setValue("name", data.name || "");
       setValue("origin_country", data.origin_country || "");

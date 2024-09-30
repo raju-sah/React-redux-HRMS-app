@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,19 +28,10 @@ export const Edit = ({ data, isLoading, modalId }) => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: data?.firstName || "",
-      lastName: data?.lastName || "",
-      address: data?.address || "",
-      nationality: data?.nationality || [],
-      dob: data?.dob || [],
-      description: data?.description || "",
-      popularity: data?.popularity || "",
-      status: data?.status,
-    },
+    defaultValues: data || {},
   });
 
-  useEffect(() => {
+  useMemo(() => {
     if (data) {
       setValue("firstName", data.firstName || "");
       setValue("lastName", data.lastName || "");

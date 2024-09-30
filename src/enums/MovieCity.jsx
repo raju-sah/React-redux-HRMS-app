@@ -52,4 +52,6 @@ export const movieCities = [
   { value: 43, label: "Novosibirsk", country: "RU" },
   { value: 44, label: "Yekaterinburg", country: "RU" },
   { value: 45, label: "Nizhny Novgorod", country: "RU" },
+
+  { value: 45, label: "Kathmandu", country: "NP" },
 ];

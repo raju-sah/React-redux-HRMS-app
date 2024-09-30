@@ -54,7 +54,7 @@ const Modal = ({
                 <RxCross2 className="w-8 h-6" />
               </button>
             </div>
-            <div className={`px-6 pb-6 overflow-y-auto`}>
+            <div className={`px-6 pb-6 overflow-y-auto`} style={{ maxHeight: "90vh" }}>
               {typeof children === "function"
                 ? children({ modalId: generatedModalId })
                 : React.cloneElement(children, { modalId: generatedModalId })}

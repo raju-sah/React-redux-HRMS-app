@@ -90,6 +90,7 @@ export const Index = () => {
       languageName: languages.find(lang => lang.value === item.language)?.label || "N/A",
     }));
   }, [getDatas]);
+  
   const filterColumns = ["name", "originCountry", "originCity", "languageName"];
 
   return isLoading ? (
