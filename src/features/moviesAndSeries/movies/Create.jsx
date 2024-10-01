@@ -40,7 +40,7 @@ export const Create = ({ modalId }) => {
 
   const handleFormSubmit = useCallback(
     (data) => {
-console.log(data);
+      console.log(data);
       onSubmit(data).then(() => {
         reset();
         dispatch(closeModal(modalId));
@@ -76,13 +76,14 @@ console.log(data);
           errors={errors}
           maxLength="100"
         />
+
         <TagInput
           label="Directors Name"
           name="directors"
           required={true}
           className="col-span-2"
           placeholder="Enter names and separate by commas or enter.."
-          register={register}
+          control={control}
           errors={errors}
         />
       </div>
@@ -94,7 +95,7 @@ console.log(data);
           required={true}
           className="col-span-3"
           placeholder="Enter names and separate by commas.."
-          register={register}
+          control={control}
           errors={errors}
         />
         <TagInput
@@ -103,7 +104,7 @@ console.log(data);
           required={true}
           className="col-span-3"
           placeholder="Enter names and separate by commas.."
-          register={register}
+          control={control}
           errors={errors}
         />
       </div>
@@ -116,7 +117,6 @@ console.log(data);
           className="col-span-2"
           options={movieRating}
         />
-
         <FormInput
           label="Release Date"
           name="release_date"
@@ -183,7 +183,6 @@ console.log(data);
           control={control}
           required={true}
           className="col-span-2"
-          isMulti={true}
           options={
             !isindustryLoading && industryData?.items
               ? industryData.items

@@ -16,6 +16,7 @@ import { languages } from "../../books/Language";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
 import Modal from "../../../app/components/form/Modal";
 import CustomDataTable from "../../../app/components/CustomDatatable";
+import { movieRating } from "../../../enums/MovieRating";
 
 export const Index = () => {
   const { data: getDatas, isLoading } = useGetMoviesQuery();
@@ -32,7 +33,6 @@ export const Index = () => {
   const { data: GenreData } = useGetGenresQuery();
   const { data: industryData } = useGetIndustrysQuery();
 
-
   const columns = [
     {
       name: "SN",
@@ -40,24 +40,74 @@ export const Index = () => {
       width: "55px",
     },
     {
-      name: "Title",
+      name: "Name",
       selector: (row) => row.name || "N/A",
       sortable: true,
       width: "200px",
       cell: (row) => row.name || "N/A",
     },
     {
-      name: "Author",
+      name: "Industry",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {industryData?.items
+            .filter((cat) => row.industry.includes(cat?._uuid))
+            .map((cat) => (
+              <span
+                key={cat?._uuid}
+                className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+              >
+                {cat?.name}
+              </span>
+            ))}
+        </div>
+      ),
+      width: "200px",
+    },
+    {
+      name: "Directors",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {row.directors.map((director, index) => (
+            <span
+              key={index}
+              className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+            >
+              {director}
+            </span>
+          ))}
+        </div>
+      ),
+      width: "150px",
+    },
+    {
+      name: "Actors",
+      selector: (row) => (
+        <div className="flex flex-wrap gap-1 py-1">
+          {row.actors.map((actor, index) => (
+            <span
+              key={index}
+              className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
+            >
+              {actor}
+            </span>
+          ))}
+        </div>
+      ),
+      width: "150px",
+    },
+    {
+      name: "Genre",
       selector: (row) => (
         <div className="flex flex-wrap gap-1 py-1">
           {GenreData?.items
-            .filter((auth) => row.author.includes(auth?._uuid))
+            .filter((auth) => row.genre.includes(auth?._uuid))
             .map((auth) => (
               <span
                 key={auth?._uuid}
                 className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
               >
-                {`${auth?.firstName} ${auth?.lastName}`}
+                {auth.name}
               </span>
             ))}
         </div>
@@ -65,33 +115,20 @@ export const Index = () => {
       width: "170px",
     },
     {
-      name: "Category",
-      selector: (row) => (
-        <div className="flex flex-wrap gap-1 py-1">
-          {industryData?.items
-            .filter((cat) => row.category.includes(cat?._uuid))
-            .map((cat) => (
-              <span
-                key={cat?._uuid}
-                className="bg-purple-400 rounded-md px-2 py-1 mr-1 text-xs font-medium"
-              >
-                {cat?.categoryName}
-              </span>
-            ))}
-        </div>
-      ),
-      width: "200px",
-    },
-    {
-      name: "ISBN",
-      selector: (row) => row.isbn || "N/A",
+      name: "Run Time",
+      selector: (row) => {
+        const hours = row.run_time_hour || 0;
+        const minutes = row.run_time_minute || 0;
+        return `${hours}h ${minutes}m`;
+      },
       sortable: true,
       width: "130px",
     },
     {
-      name: "Language",
+      name: "Rating",
       selector: (row) =>
-        languages.find((lang) => lang.value === row.language)?.label || "N/A",
+        movieRating.find((rating) => rating.value === row.rating)?.label ||
+        "N/A",
       sortable: true,
       width: "120px",
     },
@@ -100,28 +137,17 @@ export const Index = () => {
   const getData = useMemo(() => {
     return (getDatas?.items || []).map((item) => ({
       ...item,
-      authorNames: GenreData?.items
-        .filter((auth) => item.author.includes(auth?._uuid))
-        .map((auth) => `${auth?.firstName} ${auth?.lastName}`)
+      genreNames: GenreData?.items
+        .filter((auth) => item.genre.includes(auth?._uuid))
+        .map((auth) => auth?.name)
         .join(", "),
-      categoryNames: industryData?.items
-        .filter((cat) => item.category.includes(cat?._uuid))
-        .map((cat) => cat?.categoryName),
-      languageName:
-        languages.find((lang) => lang.value === item.language)?.label || "N/A",
+      industryNames: industryData?.items
+        .filter((cat) => item.industry.includes(cat?._uuid))
+        .map((cat) => cat?.name),
     }));
   }, [getDatas, GenreData, industryData]);
 
-  const filterColumns = [
-    "name",
-    "authorNames",
-    "categoryNames",
-    "publication",
-    "isbn",
-    "languageName",
-    "edition",
-    "price",
-  ];
+  const filterColumns = ["name", "genreNames", "industryNames"];
 
   return isLoading ? (
     <DataTableSkeleton />

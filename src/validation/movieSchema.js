@@ -25,17 +25,22 @@ export const MovieSchema = (data, currentName = "") => {
       .refine((val) => !existingNames.has(val.toLowerCase()), {
         message: "Name already exists",
       }),
-    directors: z.string().trim().min(1, "Director is required"),
-    actors: z.array(z.string()).min(1, "Actor is required"),
-    producers: z.array(z.string()).min(1, "Producer is required"),
-    genre: z.array(z.string()).min(1, "Genre is required"),
-    industry: z.array(z.string()).min(1, "Industry is required"),
+    directors: z
+      .array(z.string().trim().min(1, "Director name cannot be empty"))
+      .min(1, "Director is required"),
+    actors: z
+    .array(z.string().trim().min(1, "Actor name cannot be empty"))
+    .min(1, "Actor is required"),
+    producers: z
+    .array(z.string().trim().min(1, "Producer name cannot be empty"))
+    .min(1, "Producer is required"),
     rating: z.coerce.number().min(1, "Rating is required"),
+    genre: z.array(z.string()).min(1, "Genre is required"),
+    industry: z.string().trim().min(1, "Industry is required"),
     release_date: z.string().date().min(1, "Release date is required"),
     run_time_hour: z.coerce.number().min(1, "Run time hour is required"),
     run_time_minute: z.coerce.number().min(1, "Run time minute is required"),
     bo_collection: z.coerce.number().min(1, "BO collection is required"),
-    edition: z.string().trim().min(1, "Edition is required").max(20),
     description: z.string().trim().max(300),
     status: z.boolean().default(false),
   });

@@ -15,6 +15,8 @@ import FormTextArea from "../../../app/components/form/FormTextArea";
 import Checkbox from "../../../app/components/form/CheckBox";
 import FormButton from "../../../app/components/form/FormButton";
 import { MovieSchema } from "../../../validation/movieSchema";
+import { movieRating } from "../../../enums/MovieRating";
+import TagInput from "../../../app/components/form/TagInput";
 
 export const Edit = ({ data, isLoading, modalId }) => {
   const { data: bookData } = useGetMoviesQuery();
@@ -37,27 +39,30 @@ export const Edit = ({ data, isLoading, modalId }) => {
     if (data) {
       setValue("image_url", data.image_url || "");
       setValue("name", data.name || "");
-      setValue("author", data.author || []);
-      setValue("category", data.category || []);
-      setValue("price", data.price || "");
-      setValue("publication", data.publication || "");
-      setValue("isbn", data.isbn || "");
-      setValue("edition", data.edition || "");
-      setValue("language", data.language || "");
+      setValue("directors", data.directors || []);
+      setValue("actors", data.actors || []);
+      setValue("producers", data.producers || []);
+      setValue("genre", data.genre || []);
+      setValue("industry", data.industry || []);
+      setValue("release_date", data.release_date || "");
+      setValue("rating", data.rating || "");
+      setValue("run_time_hour", data.run_time_hour || "");
+      setValue("run_time_minute", data.run_time_minute || "");
+      setValue("bo_collection", data.bo_collection || "");
       setValue("description", data.description || "");
       setValue("status", data.status);
     }
   }, [data, setValue]);
 
-  const { data: authorData, isLoading: isAuthorLoading } = useGetGenresQuery();
-  const { data: booksCategoryData, isLoading: isBooksCategoryLoading } =
+  const { data: genreData, isLoading: isGenreLoading } = useGetGenresQuery();
+  const { data: industryData, isLoading: isindustryLoading } =
     useGetIndustrysQuery();
+
   const updateQuery = useUpdateMovieMutation;
   const { onSubmit, isLoading: isUpdating } = useUpdateHook(updateQuery);
 
   const handleFormSubmit = useCallback(
     (sendDatas) => {
-      sendDatas.language = Number(sendDatas.language);
 
       onSubmit({ id: data._uuid, ...sendDatas }).then(() => {
         reset();
@@ -74,7 +79,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
-       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
           label="Image URL"
           name="image_url"
@@ -96,99 +101,140 @@ export const Edit = ({ data, isLoading, modalId }) => {
           errors={errors}
           maxLength="100"
         />
-        <FormSelect
-          label="Author"
-          name="author"
-          control={control}
+
+        <TagInput
+          label="Directors Name"
+          name="directors"
           required={true}
-          isMulti={true}
           className="col-span-2"
-          options={
-            !isAuthorLoading && authorData?.items
-              ? authorData.items
-                  .filter((item) => item.status === true)
-                  .map((item) => ({
-                    value: item._uuid,
-                    label: `${item.firstName} ${item.lastName}`,
-                  }))
-              : []
-          }
+          placeholder="Enter names and separate by commas or enter.."
+          control={control}
+          errors={errors}
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-9 gap-4">
-        <FormSelect
-          label="Category"
-          name="category"
-          control={control}
+
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <TagInput
+          label="Actors Name"
+          name="actors"
           required={true}
           className="col-span-3"
+          placeholder="Enter names and separate by commas.."
+          control={control}
+          errors={errors}
+        />
+        <TagInput
+          label="Producers Name"
+          name="producers"
+          required={true}
+          className="col-span-3"
+          placeholder="Enter names and separate by commas.."
+          control={control}
+          errors={errors}
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-8 gap-4 mt-4">
+        <FormSelect
+          label="Movie Rating"
+          name="rating"
+          control={control}
+          required={true}
+          className="col-span-2"
+          options={movieRating}
+        />
+        <FormInput
+          label="Release Date"
+          name="release_date"
+          type="date"
+          placeholder="Release Date"
+          required={true}
+          className="col-span-2"
+          register={register}
+          errors={errors}
+        />
+        <div className="relative col-span-2">
+          <FormInput
+            label="Run Time Hour"
+            type="number"
+            name="run_time_hour"
+            placeholder="2 digit number only"
+            required={true}
+            min={0}
+            max={12}
+            register={register}
+            errors={errors}
+            maxDigit={2}
+          />
+          <div className="absolute top-10 right-0 w-5 h-0.5 bg-gray-800 transform translate-x-full"></div>
+        </div>
+
+        <div className="relative col-span-2">
+          <FormInput
+            label="Run Time Minute"
+            type="number"
+            name="run_time_minute"
+            placeholder="2 digit number only"
+            required={true}
+            min={0}
+            max={59}
+            register={register}
+            errors={errors}
+            maxDigit={2}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 ">
+        <FormSelect
+          label="Genre"
+          name="genre"
+          control={control}
+          required={true}
           isMulti={true}
+          className="col-span-2"
           options={
-            !isBooksCategoryLoading && booksCategoryData?.items
-              ? booksCategoryData.items
+            !isGenreLoading && genreData?.items
+              ? genreData.items
                   .filter((item) => item.status === true)
                   .map((item) => ({
                     value: item._uuid,
-                    label: item.categoryName,
+                    label: item.name,
                   }))
               : []
           }
         />
         <FormSelect
-          label="Language"
-          name="language"
+          label="Industry"
+          name="industry"
           control={control}
           required={true}
           className="col-span-2"
-          options={languages}
+          options={
+            !isindustryLoading && industryData?.items
+              ? industryData.items
+                  .filter((item) => item.status === true)
+                  .map((item) => ({
+                    value: item._uuid,
+                    label: item.name,
+                  }))
+              : []
+          }
         />
+
         <FormInput
-          label="Price"
+          label="BO Collection(in USD Million)"
           type="number"
-          name="price"
+          name="bo_collection"
           placeholder="10 digit number only"
           required={true}
           min={0}
           register={register}
           errors={errors}
           className="col-span-2"
-          maxDigit={10}
-        />
-        <FormInput
-          label="ISBN"
-          type="number"
-          name="isbn"
-          placeholder="13 digit number only"
-          required={true}
-          min={0}
-          register={register}
-          errors={errors}
-          className="col-span-2"
-          maxDigit={13}
+          maxDigit={5}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
-        <FormInput
-          label="Publication"
-          name="publication"
-          placeholder="Publication"
-          required={true}
-          className="col-span-3"
-          register={register}
-          errors={errors}
-          maxLength="100"
-        />
-        <FormInput
-          label="Edition"
-          name="edition"
-          placeholder="Edition"
-          required={true}
-          className="col-span-2"
-          register={register}
-          errors={errors}
-          maxLength="20"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormTextArea
           label="Description"
           name="description"
