@@ -30,22 +30,14 @@ export const Edit = ({ data, isLoading, modalId }) => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: data || {},
+    defaultValues: {},
   });
 
   useMemo(() => {
     if (data) {
-      setValue("image_url", data.image_url || "");
-      setValue("name", data.name || "");
-      setValue("author", data.author || []);
-      setValue("category", data.category || []);
-      setValue("price", data.price || "");
-      setValue("publication", data.publication || "");
-      setValue("isbn", data.isbn || "");
-      setValue("edition", data.edition || "");
-      setValue("language", data.language || "");
-      setValue("description", data.description || "");
-      setValue("status", data.status);
+      Object.entries(data).forEach(([key, value]) => {
+        setValue(key, value ?? (Array.isArray(value) ? [] : ""));
+      });
     }
   }, [data, setValue]);
 
@@ -74,7 +66,7 @@ export const Edit = ({ data, isLoading, modalId }) => {
       onSubmit={handleSubmit(handleFormSubmit)}
       className="mx-auto p-2 mt-5 rounded-lg"
     >
-       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <FormInput
           label="Image URL"
           name="image_url"

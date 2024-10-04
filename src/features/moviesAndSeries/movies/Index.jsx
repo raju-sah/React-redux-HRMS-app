@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
-
 import { Create } from "./Create";
 import { Edit } from "./Edit";
 import { View } from "./View";
@@ -12,7 +11,6 @@ import {
 } from "./MovieApiSlice";
 import { useGetGenresQuery } from "../genres/GenreApiSlice";
 import { useGetIndustrysQuery } from "../industry/IndustryApiSlice";
-import { languages } from "../../books/Language";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
 import Modal from "../../../app/components/form/Modal";
 import CustomDataTable from "../../../app/components/CustomDatatable";

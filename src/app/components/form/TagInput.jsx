@@ -13,25 +13,22 @@ const TagInput = ({
   errors = {},
   ...props
 }) => {
-  const [tags, setTags] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
-  const handleKeyDown = (e, onChange) => {
+  const handleKeyDown = (e, onChange, value) => {
     if ((e.key === "," || e.key === "Enter") && inputValue.trim()) {
       e.preventDefault();
       const newTag = inputValue.trim().replace(",", "");
-      if (newTag && !tags.includes(newTag)) {
-        const newTags = [...tags, newTag];
-        setTags(newTags);
+      if (newTag && !value.includes(newTag)) {
+        const newTags = [...value, newTag];
         onChange(newTags); // Update form value
       }
       setInputValue("");
     }
   };
 
-  const removeTag = (index, onChange) => {
-    const newTags = tags.filter((_, i) => i !== index);
-    setTags(newTags);
+  const removeTag = (index, onChange, value) => {
+    const newTags = value.filter((_, i) => i !== index);
     onChange(newTags); // Update form value
   };
 
@@ -53,7 +50,7 @@ const TagInput = ({
               errors[name] ? "border-red-500 focus-within:border-red-500" : ""
             }`}
           >
-            {tags.map((tag, index) => (
+            {value.map((tag, index) => (
               <div
                 key={index}
                 className="bg-gray-200 text-sm px-2 py-1 rounded-lg flex items-center"
@@ -61,7 +58,7 @@ const TagInput = ({
                 {tag}
                 <RxCross2
                   className="ml-1 cursor-pointer text-red-600"
-                  onClick={() => removeTag(index, onChange)}
+                  onClick={() => removeTag(index, onChange, value)}
                 />
               </div>
             ))}
@@ -71,8 +68,8 @@ const TagInput = ({
               className="flex-grow px-2 border-none focus:outline-none h-8"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, onChange)}
-              placeholder={tags.length === 0 ? placeholder : ""}
+              onKeyDown={(e) => handleKeyDown(e, onChange, value)}
+              placeholder={value.length === 0 ? placeholder : ""}
               {...props}
             />
           </div>

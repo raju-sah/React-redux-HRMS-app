@@ -35,18 +35,14 @@ export const Edit = ({ data, isLoading, modalId }) => {
     watch,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: data || {},
+    defaultValues: {},
   });
 
   useMemo(() => {
     if (data) {
-      setValue("name", data.name || "");
-      setValue("origin_country", data.origin_country || "");
-      setValue("origin_city", data.origin_city || []);
-      setValue("popularity", data.popularity || 0);
-      setValue("language", data.language || "");
-      setValue("description", data.description || "");
-      setValue("status", data.status);
+      Object.entries(data).forEach(([key, value]) => {
+        setValue(key, value ?? (Array.isArray(value) ? [] : ""));
+      });
     }
   }, [data, setValue]);
 

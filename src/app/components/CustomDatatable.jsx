@@ -75,6 +75,7 @@ const CustomDataTable = ({
     () => ({
       name: "Actions",
       width: "auto",
+
       cell: (row) => (
         <div className="flex space-x-2">
           {modals.map((modal, index) => (

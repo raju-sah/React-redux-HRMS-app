@@ -10,7 +10,6 @@ import useUpdateHook from "../../../hooks/useUpdateHook";
 import EditSkeleton from "../../../app/components/skeletons/EditSkeleton";
 import FormInput from "../../../app/components/form/FormInput";
 import FormSelect from "../../../app/components/form/FormSelect";
-import { languages } from "../../books/Language";
 import FormTextArea from "../../../app/components/form/FormTextArea";
 import Checkbox from "../../../app/components/form/CheckBox";
 import FormButton from "../../../app/components/form/FormButton";
@@ -19,6 +18,7 @@ import { movieRating } from "../../../enums/MovieRating";
 import TagInput from "../../../app/components/form/TagInput";
 
 export const Edit = ({ data, isLoading, modalId }) => {
+  console.log(data);
   const { data: bookData } = useGetMoviesQuery();
   const schema = MovieSchema(bookData, data?.name);
 
@@ -32,25 +32,14 @@ export const Edit = ({ data, isLoading, modalId }) => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: data || {},
+    defaultValues: {},
   });
 
   useMemo(() => {
     if (data) {
-      setValue("image_url", data.image_url || "");
-      setValue("name", data.name || "");
-      setValue("directors", data.directors || []);
-      setValue("actors", data.actors || []);
-      setValue("producers", data.producers || []);
-      setValue("genre", data.genre || []);
-      setValue("industry", data.industry || []);
-      setValue("release_date", data.release_date || "");
-      setValue("rating", data.rating || "");
-      setValue("run_time_hour", data.run_time_hour || "");
-      setValue("run_time_minute", data.run_time_minute || "");
-      setValue("bo_collection", data.bo_collection || "");
-      setValue("description", data.description || "");
-      setValue("status", data.status);
+      Object.entries(data).forEach(([key, value]) => {
+        setValue(key, value ?? (Array.isArray(value) ? [] : ''));
+      });
     }
   }, [data, setValue]);
 
@@ -63,7 +52,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
 
   const handleFormSubmit = useCallback(
     (sendDatas) => {
-
       onSubmit({ id: data._uuid, ...sendDatas }).then(() => {
         reset();
         dispatch(closeModal(modalId));
@@ -219,12 +207,11 @@ export const Edit = ({ data, isLoading, modalId }) => {
               : []
           }
         />
-
         <FormInput
           label="BO Collection(in USD Million)"
           type="number"
           name="bo_collection"
-          placeholder="10 digit number only"
+          placeholder="5 digit number only"
           required={true}
           min={0}
           register={register}
@@ -233,7 +220,6 @@ export const Edit = ({ data, isLoading, modalId }) => {
           maxDigit={5}
         />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormTextArea
           label="Description"

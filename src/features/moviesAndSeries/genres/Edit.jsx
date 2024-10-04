@@ -29,16 +29,14 @@ export const Edit = ({ data, isLoading, modalId }) => {
     reset,
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: data || {},
+    defaultValues: {},
   });
 
   useMemo(() => {
     if (data) {
-      setValue("name", data.name || "");
-      setValue("ageGroup", data.ageGroup || []);
-      setValue("relatedGenres", data.relatedGenres || []);
-      setValue("description", data.description || "");
-      setValue("status", data.status);
+      Object.entries(data).forEach(([key, value]) => {
+        setValue(key, value ?? (Array.isArray(value) ? [] : ""));
+      });
     }
   }, [data, setValue]);
 
