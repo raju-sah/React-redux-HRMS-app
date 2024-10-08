@@ -10,15 +10,15 @@ const Modal = ({
   children,
   icon: Icon,
   className,
-  setbtnIdFunc,
+  setbtnId,
 }) => {
   const dispatch = useDispatch();
-  const generatedModalId = useId(); // Automatically generated ID
+  const generatedModalId = useId(); // Automatically generated unique ID
   const modalState = useSelector((state) => state.modal.openModals[generatedModalId]);
 
   const handleOpen = () => {
-    if (setbtnIdFunc) {
-      setbtnIdFunc();
+    if (setbtnId) {
+      setbtnId();
     }
     dispatch(openModal(generatedModalId));
   };
@@ -72,7 +72,7 @@ Modal.propTypes = {
   children: PropTypes.node.isRequired,
   icon: PropTypes.elementType,
   className: PropTypes.string,
-  setbtnIdFunc: PropTypes.func,
+  setbtnId: PropTypes.func,
 };
 
 export default Modal;

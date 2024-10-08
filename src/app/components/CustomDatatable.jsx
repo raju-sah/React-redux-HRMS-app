@@ -84,7 +84,7 @@ const CustomDataTable = ({
               icon={modal.btnIcon}
               headingText={modal.title}
               className={modal.className}
-              setbtnIdFunc={() => modal.setbtnIdFunc(row)}
+              setbtnId={() => modal.setbtnId(row)}
             >
               {typeof modal.content === "function"
                 ? modal.content(row)

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaEye, FaEdit } from "react-icons/fa";
 import Modal from "../../../app/components/form/Modal";
 import DataTableSkeleton from "../../../app/components/skeletons/DatatableSkeleton";
@@ -17,7 +17,7 @@ import PopularityBadge from "../../../app/components/PopularityBadge";
 
 const Index = () => {
   const { data: getDatas, isLoading } = useGetBookCategoryQuery();
-  const getData = getDatas?.items || [];
+  const getData = useMemo(() => getDatas?.items || [], [getDatas]);
   const [selectedItemId, setselectedItemId] = useState(null);
 
   const [statusChange] = useBookCategoryStatusChangeMutation();
@@ -89,14 +89,14 @@ const Index = () => {
             title: "View Book Category",
             btnIcon: FaEye,
             className: "text-primary text-lg",
-            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            setbtnId: (row) => setselectedItemId(row._uuid),
             content: () => <View data={dataById} isLoading={isFetching} />,
           },
           {
             btnIcon: FaEdit,
             title: "Edit Book Category",
             className: "text-secondary text-lg",
-            setbtnIdFunc: (row) => setselectedItemId(row._uuid),
+            setbtnId: (row) => setselectedItemId(row._uuid),
             content: () => <Edit data={dataById} isLoading={isFetching} />,
           },
         ]}
